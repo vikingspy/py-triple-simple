@@ -83,7 +83,81 @@ class SimpleNtripleExtractor(object):
                 if len(triple_pattern_group) == 3:
                     return SimpleTriple(triple_pattern_group[0], triple_pattern_group[1], triple_pattern_group[2],triple_pattern)
                 else:
-                    return "x"
+                    return "x" # Error
+
+class SimpleNtriplesParser(SimpleNtripleExtractor):
+    def parse(self,line):
+        line = line.strip()
+        state = "TripleStart"
+        i = 0
+        start_state_position = 0
+        triples = []
+        triple_types = ""
+        
+        if line == "":
+            return "e"
+        
+        while i < len(line) and state != "TripleEnd" and state != "Comment":
+            if state == "TripleStart":
+                if line[i] == "<":
+                    state = "UriStart"
+                    start_state_position = i + 1
+                elif line[i] == "_":
+                    state = "BlankNodeStart"
+                    start_state_position = i
+                    
+                elif line[i] == "#":
+                    state = "Comment"
+                    triple_types += "c"
+                    
+            elif state == "UriStart":
+                if line[i] == ">":
+                    state = "UriEnd"
+                    triples.append(line[start_state_position:i])
+                    triple_types += "u"
+                    
+            elif state == "UriEnd":
+                if line[i] == '"':
+                    state = "LiteralStart"
+                    start_state_position = i + 1
+                elif line[i] == ".":
+                    state = "TripleEnd"
+                elif line[i] == "<":
+                    state = "UriStart"
+                    start_state_position = i + 1
+                elif line[i] == "_":
+                    state = "BlankNodeStart"
+                    start_state_position = i
+
+            elif state == "BlankNodeStart":
+                if line[i] == " " or line[i] == "\t": # a blank node is terminated by 
+                    state = "BlankNodeEnd"
+                    triples.append(line[start_state_position:i])
+                    triple_types += "b"
+                    
+            elif state == "LiteralStart":
+                if line[i] == '"' and line[i-1] != "\\":
+                    state = "LiteralEnd"
+                    triples.append(line[start_state_position:i])
+                    triple_types += "l"
+                    
+            elif state == "LiteralEnd":
+                if line[i] == ".":
+                    state = "TripleEnd"
+                    
+            elif state == "BlankNodeEnd":
+                if line[i] == ".":
+                    state = "TripleEnd"
+                elif line[i] == "<":
+                    state = "UriStart"
+                    start_state_position = i + 1
+                
+            i += 1
+        
+        if triple_types in ["uuu","uul","buu","uub", "bul"]:
+            return SimpleTriple(triples[0], triples[1], triples[2],triple_types)
+        else: #Error
+            return "x"
         
 class SimpleTriple(object):
     "A basic container for a triple"
@@ -229,7 +303,7 @@ class SimpleTripleStore(object):
         
     def load_ntriples(self,iterable_ntriples):
         "Load an ntriples iterable into the store"
-        extractor = SimpleNtripleExtractor()
+        extractor = SimpleNtriplesParser()
         for ntriple in iterable_ntriples:
             extractor_results = extractor.parse(ntriple)
             if extractor_results not in ['c','e','x']: # comments, 
