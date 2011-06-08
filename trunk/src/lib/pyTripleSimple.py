@@ -7,7 +7,7 @@ import re
 import shelve
 import os
 import time
-from xml.sax.saxutils import escape
+
 from gexf import GephiGexf
 
 class SimpleNTriplesLineReactor(object):

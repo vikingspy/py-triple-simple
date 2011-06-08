@@ -4,6 +4,8 @@
 __author__="janos"
 __date__ ="$Jun 7, 2011 11:10:39 AM$"
 
+from xml.sax.saxutils import escape
+
 class GephiGexf(object):
     "A class for generating gephi xml graphs that are read by Gephi"
     def __init__(self):
