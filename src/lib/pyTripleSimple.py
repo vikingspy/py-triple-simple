@@ -6,7 +6,6 @@ Classes for processing and working with files that follow the ntriples format.
 import re
 import shelve
 import os
-import time
 
 from gexf import GephiGexf
 
@@ -176,9 +175,6 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
             i += 1
             
         return triples_parsed
-        
-        
-        
         
 class SimpleTriple(object):
     "A basic container for a triple"

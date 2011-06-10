@@ -92,5 +92,5 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         main("reach.nt","subject_areas_aligned.nt")
     else:
-        main(sys.argv[1])
+        main(sys.argv[1],sys.argv[2])
     
