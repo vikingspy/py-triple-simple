@@ -1,5 +1,9 @@
+#!/usr/bin/python
 """
     By default loads a ntriples file into a in-memory triple store
+    and performs basic statistics on the resulting ntriple file
+
+    
 """
 
 
