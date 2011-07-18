@@ -50,8 +50,7 @@ def main(ntriples_file_name,alignment_ntriples_file_name,class_uri = "http://viv
     print("Finished loading ntriples file in %s seconds" % (end_time - start_time,))
     
     uris_to_align = [triple[0] for triple in ts.objects(class_uri)]
-    
-    
+
     umls_cuis = {}
     number_of_uris_to_align = len(uris_to_align)
     i = 1
