@@ -25,19 +25,19 @@ class SimpleNTriplesLineReactor(object):
             self.call_back_function = call_back_function
             
     def default_call_back_function(self,result,result_obj=None):
-        "By default the callback function will just print the result"
+        """By default the callback function will just print the result"""
         print(result)
         return result_obj
     
     def process(self):
-        "Begin the process of a set of ntriples"
+        """Begin the process of a set of ntriples"""
         for unparsed_statement in self.iterable_stream:
             matching_result = self.match_function(unparsed_statement)
             if matching_result:
                 self.result_obj = self.call_back_function(matching_result,self.result_obj)
     
     def result_obj(self):
-        "Returns result obj"
+        """Returns result obj"""
         return self.result_obj
     
     
@@ -68,7 +68,7 @@ class SimpleNtripleExtractor(object):
         
     
     def parse(self,line):
-        "Parse a line of ntriples text extracting"
+        """Parse a line of ntriples text extracting"""
         line = line.strip()
         if line == "":
             return "e"
@@ -139,7 +139,7 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                     triple_types += "b"
                     
             elif state == "LiteralStart":
-                if (line[i] == '"' and line[i-1] != "\\"):
+                if line[i] == '"' and line[i-1] != "\\":
                     state = "LiteralEnd"
                     triples.append(line[start_state_position:i])
                     triple_types += "l"
@@ -177,7 +177,7 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
         return triples_parsed
         
 class SimpleTriple(object):
-    "A basic container for a triple"
+    """A basic container for a triple"""
     def __init__(self,subject,predicate,object,triple_type="uuu"):
         self.subject = subject
         self.predicate = predicate
@@ -210,14 +210,14 @@ class TripleEngine(object):
         self.predicates_index = {}
         
     def key_store(self, key_value):
-        "Some persistent stores do not allow non-string keys so take a key and do something if needed"
+        """Some persistent stores do not allow non-string keys so take a key and do something if needed"""
         return key_value
     
     def key_retrieve(self, key_value):
         return key_value
     
     def triple_store(self,triple):
-        "In case when storing triples we need to some processing this will define the behavior"
+        """In case when storing triples we need to some processing this will define the behavior"""
         return triple
     
     def triple_retrieve(self,triple):
@@ -242,12 +242,13 @@ class ShelveTripleEngine(TripleEngine):
         
 class SimpleTripleStore(object):
     """A class for encapsulating triple store behavior.  The class does not provide SPARQL
-        support or default graph, inferenceing but is designed for manipulating and processing data
+        support or default graph,
+         but is designed for manipulating and processing data
         represented in a ntriples file."""
         
     def __init__(self,triple_engine=None):
-        "By default use memory based backend"
-        
+        """By default use memory based backend"""
+
         if triple_engine is None: #By default load native model in
             self.triple_engine = TripleEngine()
         else:
@@ -402,7 +403,7 @@ class SimpleTripleStore(object):
                 return [self._decode_triple_formatted(t) for t in self.te.subjects_index[uri_addr]]
             
     def objects(self,uri):
-        "For an object specified by uri return all associated triples"
+        """For an object specified by uri return all associated triples"""
         if uri[0] == "<" and uri[-1] ==  ">":
             uri = uri[1:-1]
         uri_addr = self._encode_uri(uri)
@@ -412,7 +413,7 @@ class SimpleTripleStore(object):
                 return [self._decode_triple_formatted(t) for t in self.te.objects_index[uri_addr]]
         
     def predicates(self,uri):
-        "For an object specified by uri return all associated tiples"
+        """For an object specified by uri return all associated triples"""
         if uri[0] == "<" and uri[-1] ==  ">":
             uri = uri[1:-1]
         uri_addr = self._encode_uri(uri)
@@ -422,14 +423,14 @@ class SimpleTripleStore(object):
                 return [self._decode_triple_formatted(t) for t in self.te.predicates_index[uri_addr]]
             
     def export_to_ntriples_file(self,f):
-        "For file object wirte the triples to file"
+        """For file object wirte the triples to file"""
         for key in self.te.triples.keys():
             triple = self._decode_triple_formatted(key)
             f.write( "%s %s %s .\n" % triple)
         return f
         
     def export_to_ntriples_string(self):
-        "Export ntriples to an memory string"
+        """Export ntriples to an memory string"""
         nt = ""
         for key in self.te.triples.keys():
             triple = self._decode_triple_formatted(key)
@@ -437,7 +438,7 @@ class SimpleTripleStore(object):
         return nt
         
     def n_literals(self):
-        "Returns the number of literals in the store"
+        """Returns the number of literals in the store"""
         i = 0
         for key in self.te.objects.keys():
             if key[0] == "l":
@@ -445,7 +446,7 @@ class SimpleTripleStore(object):
         return i
                  
     def _n_objects(self,hash_index):
-        "Creates a reverse sorted list of addresses with keys"
+        """Creates a reverse sorted list of addresses with keys"""
         keys = hash_index.keys()
         keys_with_len = []
         for key in keys:
@@ -456,7 +457,7 @@ class SimpleTripleStore(object):
         return keys_with_len
     
     def _top_items(self,hash_index,top_n=None):
-        "Private method for calculating a sorted list"
+        """Private method for calculating a sorted list"""
         keys_with_len = self._n_objects(hash_index)
         
         if top_n is not None:
@@ -465,19 +466,19 @@ class SimpleTripleStore(object):
         return [(self._decode_address_formatted(top_subject[0]),top_subject[1]) for top_subject in keys_with_len]
     
     def top_subjects(self,top_n = 25):
-        "Returns a list of top referenced subjects"
+        """Returns a list of top referenced subjects"""
         return self._top_items(self.te.subjects_index,top_n)
     
     def top_objects(self,top_n = 25):
-        "Returns a list of of top referenced objects"
+        """Returns a list of of top referenced objects"""
         return self._top_items(self.te.objects_index,top_n)
     
     def top_predicates(self, top_n=25):
-        "Returns a list of top used predicates"
+        """Returns a list of top used predicates"""
         return self._top_items(self.te.predicates_index,top_n)
     
     def export_to_gexml(self,gephi_xml_file_name):
-        "Gexml is native format for the Gephi graphing program"
+        """Gexml is native format for the Gephi graphing program"""
         f = open(gephi_xml_file_name,"w")
         gexf = GephiGexf()
         f.write(gexf.xml_header())

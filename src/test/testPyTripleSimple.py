@@ -9,16 +9,15 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
     def setUp(self):
         f = open('test.nt','r')
         self.test_source = f
-        self.parser = pyTripleSimple.SimpleNtripleExtractor()
+        self.parser = pyTripleSimple.SimpleNtriplesParser()
 
     def test_testPyTripleSimpleParser(self):
-        pass
+        results = self.parser.parse(self.test_source.read())
+        self.assertEquals(30,len(results),"Wrong number of triples extracted")
 
     def test_testPyTripleSimpleStore(self):
         ts = pyTripleSimple.SimpleTripleStore()
         ts.load_ntriples(self.test_source)
-        print(ts.export_to_ntriples_string())
-        
         self.assertEquals(30,ts.n_triples(),"Wrong number of triples extracted")
 
 if __name__ == '__main__':
