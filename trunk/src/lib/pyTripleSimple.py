@@ -31,10 +31,10 @@ class SimpleNTriplesLineReactor(object):
     
     def process(self):
         """Begin the process of a set of ntriples"""
-        for unparsed_statement in self.iterable_stream:
-            matching_result = self.match_function(unparsed_statement)
+        for unread_statement in self.iterable_stream:
+            matching_result = self.match_function(unread_statement)
             if matching_result:
-                self.result_obj = self.call_back_function(matching_result,self.result_obj)
+                self.result_obj = self.call_back_function(matching_result, self.result_obj)
     
     def result_obj(self):
         """Returns result obj"""
@@ -196,8 +196,7 @@ class SimpleTriple(object):
  
     
 class TripleEngine(object):
-    """In memory model of a triple store uses native python dictionaries for 
-    indexing."""
+    """Abstract class for native triplestore in Python"""
     
     def __init__(self):
         self.symbols = {}
@@ -223,20 +222,19 @@ class TripleEngine(object):
         
 class SimpleTripleStore(object):
     """A class for encapsulating triple store behavior.  The class does not provide SPARQL
-        support or default graph,
-         but is designed for manipulating and processing data
-        represented in a ntriples file."""
+        support or default graph but it is designed for manipulating and processing data
+        represented in a ntriples text file. """
         
     def __init__(self,triple_engine=None):
-        """By default use memory based backend"""
+        """By default it uses the in-memory based backend"""
 
-        if triple_engine is None: #By default load native model in
+        if triple_engine is None: #By default load native model
             self.triple_engine = TripleEngine()
         else:
             self.triple_engine = triple_engine
         
         self.te = self.triple_engine # shortcut attribute
-        
+
     def n_symbols(self):
         """Symbols are integers that map to a string."""
         return len(self.te.symbols)
@@ -246,7 +244,7 @@ class SimpleTripleStore(object):
         return len(self.te.triples)
     
     def n_objects(self):
-        """Number of distinct objects in the spo sense"""
+        """Number of distinct objects in the SPO sense"""
         return len(self.te.objects_index)
     
     def n_predicates(self):
@@ -254,7 +252,7 @@ class SimpleTripleStore(object):
         return len(self.te.predicates_index)
     
     def n_subjects(self):
-        """Number of dstinct subjects"""
+        """Number of distinct subjects"""
         return len(self.te.subjects_index)
     
     def add_triple(self,triple_object):
@@ -305,9 +303,9 @@ class SimpleTripleStore(object):
             extracted_results = extractor.parse(ntriple)
             for extracted_result in extracted_results: 
                 self.add_triple(extracted_result)
-                     
+
     def _add_symbol(self,item):
-        "Add a symbol"
+        """Add a symbol"""
         if self.te.symbols.has_key(item):
             symbol_address = self.te.key_retrieve(self.te.symbols[item])
         else:
@@ -402,8 +400,8 @@ class SimpleTripleStore(object):
                 return [self._decode_triple_formatted(t) for t in self.te.predicates_index[uri_addr]]
             
     def export_to_ntriples_file(self,f):
-        """For file object wirte the triples to file"""
-        for key in self.te.triples.keys():
+        """For file object write the triples to file"""
+        for key in self.te.triples.iterkeys():
             triple = self._decode_triple_formatted(key)
             f.write( "%s %s %s .\n" % triple)
         return f
@@ -411,7 +409,7 @@ class SimpleTripleStore(object):
     def export_to_ntriples_string(self):
         """Export ntriples to an memory string"""
         nt = ""
-        for key in self.te.triples.keys():
+        for key in self.te.triples.iterkeys():
             triple = self._decode_triple_formatted(key)
             nt +=  "%s %s %s .\n" % triple
         return nt
@@ -419,14 +417,14 @@ class SimpleTripleStore(object):
     def n_literals(self):
         """Returns the number of literals in the store"""
         i = 0
-        for key in self.te.objects.keys():
+        for key in self.te.objects.iterkeys():
             if key[0] == "l":
                 i += 1
         return i
                  
     def _n_objects(self,hash_index):
         """Creates a reverse sorted list of addresses with keys"""
-        keys = hash_index.keys()
+        keys = hash_index.iterkeys()
         keys_with_len = []
         for key in keys:
             keys_with_len.append((key,len(hash_index[key])))
@@ -455,3 +453,5 @@ class SimpleTripleStore(object):
     def top_predicates(self, top_n=25):
         """Returns a list of top used predicates"""
         return self._top_items(self.te.predicates_index,top_n)
+
+        
