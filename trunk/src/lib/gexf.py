@@ -79,3 +79,40 @@ class GephiGexf(object):
     
     def close_edge(self):
         return 6 * '\t' + '</edge>\n'
+
+class GexfTriples(object):
+    def export_to_gexml(self,gephi_xml_file_name):
+        """Gexml is native format for the Gephi graphing program"""
+        f = open(gephi_xml_file_name,"w")
+        gexf = GephiGexf()
+        f.write(gexf.xml_header())
+        f.write(gexf.metadata())
+        f.write(gexf.open_graph())
+
+        f.write(gexf.open_nodes())
+        for object in self.te.objects.keys():
+            value = self.te.objects[object]
+            if object[0] == "l":
+                associated_triples_address = self.te.objects_index[object]
+                for triple_address in associated_triples_address:
+                    f.write(gexf.open_node("t" + str(triple_address),value))
+                    f.write(gexf.close_node())
+            else:
+                f.write(gexf.open_node(object,value))
+                f.write(gexf.close_node())
+        f.write(gexf.close_nodes())
+
+        f.write(gexf.open_edges())
+
+        for triple_addr in self.te.triples.keys():
+            triple = self.te.triples[triple_addr]
+            if triple[2][0] == "l":
+                f.write(gexf.open_edge(triple_addr,triple[0],"t" + str(triple_addr)))
+            else:
+                f.write(gexf.open_edge(triple_addr,triple[0],triple[2]))
+            f.write(gexf.close_edge())
+
+        f.write(gexf.close_edges())
+
+        f.write(gexf.close_graph())
+        f.write(gexf.close_xml())
