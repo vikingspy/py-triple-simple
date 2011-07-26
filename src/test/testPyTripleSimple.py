@@ -11,10 +11,6 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         self.test_source = f
         self.parser = pyTripleSimple.SimpleNtriplesParser()
 
-    def test_testPyTripleSimpleParser(self):
-        results = self.parser.parse(self.test_source.read())
-        self.assertEquals(30,len(results),"Wrong number of triples extracted")
-
     def test_testPyTripleSimpleStore(self):
         ts = pyTripleSimple.SimpleTripleStore()
         ts.load_ntriples(self.test_source)
