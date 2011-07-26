@@ -455,5 +455,3 @@ class SimpleTripleStore(object):
     def top_predicates(self, top_n=25):
         """Returns a list of top used predicates"""
         return self._top_items(self.te.predicates_index,top_n)
-
-        
