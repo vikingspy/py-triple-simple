@@ -170,8 +170,6 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                 if i < len(line):
                     if line[i] == '\r' or line[i] == '\n':
                         state="TripleStart"
-                    
-                
             i += 1
             
         return triples_parsed
@@ -192,7 +190,7 @@ class SimpleTriple(object):
     def object_type(self):
         return self.triple_type[2]
     def to_tuple(self):
-        return (self.subject,self.predicate,self.object)
+        return (self.subject, self.predicate, self.object)
     def __repr__(self):
         return str(self.to_tuple())
  
@@ -222,23 +220,6 @@ class TripleEngine(object):
     
     def triple_retrieve(self,triple):
         return triple
-    
-class ShelveTripleEngine(TripleEngine):
-    """Shelve is a persistent store based on python shelve module.  
-    Currently it does not scale very well"""
-    
-    def __init__(self, base_file_name=""):
-        self.symbols = shelve.open(os.path.join(base_file_name + "_identities"))
-        self.triples = shelve.open(os.path.join(base_file_name + "_triples"))
-        self.objects = shelve.open(os.path.join(base_file_name + "_objects"))
-        self.subjects_index = shelve.open(os.path.join(base_file_name + "_subjects_index"))
-        self.predicates_index = shelve.open(os.path.join(base_file_name + "_predicates_index"))
-        self.objects_index = shelve.open(os.path.join(base_file_name + "_objects_index"))
-        
-    def key_store(self,key_value):
-        return str(key_value)
-    def key_retrieve(self,key_value):
-        return int(key_value)
         
 class SimpleTripleStore(object):
     """A class for encapsulating triple store behavior.  The class does not provide SPARQL
@@ -257,28 +238,27 @@ class SimpleTripleStore(object):
         self.te = self.triple_engine # shortcut attribute
         
     def n_symbols(self):
-        "Symbols are integers that map to a string."
+        """Symbols are integers that map to a string."""
         return len(self.te.symbols)
     
     def n_triples(self):
-        "Returns the number of statements/triples in a store"
+        """Returns the number of statements/triples in a store"""
         return len(self.te.triples)
     
     def n_objects(self):
-        "Number of distinct objects in the spo sense"
+        """Number of distinct objects in the spo sense"""
         return len(self.te.objects_index)
     
     def n_predicates(self):
-        "Number of distinct predicates"
+        """Number of distinct predicates"""
         return len(self.te.predicates_index)
     
     def n_subjects(self):
-        "Number of dstinct subjects"
+        """Number of dstinct subjects"""
         return len(self.te.subjects_index)
     
     def add_triple(self,triple_object):
-        "Add a triple to the store"
-        
+        """Add a triple to the store"""
         triple = triple_object.to_tuple()
         
         t1 = triple[0]
@@ -301,7 +281,6 @@ class SimpleTripleStore(object):
         self.te.triples[self.te.key_store(triple_address)] = self.te.triple_store((t1_addr,t2_addr,t3_addr))
         
         #Build indices for quicker retrieval
-        
         if self.te.subjects_index.has_key(t1_addr):
             self.te.subjects_index[t1_addr].append(triple_address)
         else:
@@ -320,7 +299,7 @@ class SimpleTripleStore(object):
         return triple_address
         
     def load_ntriples(self,iterable_ntriples):
-        "Load an ntriples iterable into the store"
+        """Load an ntriples iterable into the store"""
         extractor = SimpleNtriplesParser()
         for ntriple in iterable_ntriples:
             extracted_results = extractor.parse(ntriple)
@@ -366,11 +345,11 @@ class SimpleTripleStore(object):
             return symbol
         
     def _decode_address_formatted(self,object_address):
-        "Pass in a reference to an object and decodes it"
+        """Pass in a reference to an object and decodes it"""
         return self._format_symbol(self._decode_address(object_address),object_address[0]) 
     
     def _decode_triple_formatted(self, triple_address):
-        "Formats triples into an address formatted"
+        """Formats triples into an address formatted"""
         triple = self.te.triples[triple_address]
         t1 = self._decode_address_formatted(triple[0])
         t2 = self._decode_address_formatted(triple[1])
@@ -378,7 +357,7 @@ class SimpleTripleStore(object):
         return (t1,t2,t3)
     
     def _encode_uri(self,uri):
-        "Encode a uri into a referencable address"
+        """Encode a uri into a referencable address"""
         if self.te.symbols.has_key(uri):
             sym_addr = self.te.symbols[uri]
             return 'u' + str(sym_addr)
@@ -386,7 +365,7 @@ class SimpleTripleStore(object):
             return 0
         
     def _encode_literal(self,literal):
-        "Encode a literal into a referencable address"
+        """Encode a literal into a referencable address"""
         if self.symbol.has_key(literal):
             sym_addr = self.te.symbols[literal]
             return 'l' + sym_addr
@@ -394,7 +373,7 @@ class SimpleTripleStore(object):
             return 0
         
     def subjects(self,uri):
-        "For a subject specifeid by a uri return all associated triples"
+        """For a subject specifeid by a uri return all associated triples"""
         if uri[0] == "<" and uri[-1] ==  ">":
             uri = uri[1:-1]
         uri_addr = self._encode_uri(uri)
@@ -476,50 +455,5 @@ class SimpleTripleStore(object):
     def top_predicates(self, top_n=25):
         """Returns a list of top used predicates"""
         return self._top_items(self.te.predicates_index,top_n)
-    
-    def export_to_gexml(self,gephi_xml_file_name):
-        """Gexml is native format for the Gephi graphing program"""
-        f = open(gephi_xml_file_name,"w")
-        gexf = GephiGexf()
-        f.write(gexf.xml_header())
-        f.write(gexf.metadata())
-        f.write(gexf.open_graph())
-        
-#        f.write(gexf.open_attributes("nodes"))
-#        f.write(gexf.open_attribute("0","uri","string"))
-#        f.write(gexf.close_attribute())
-#        f.write(gexf.close_attributes())
-#        
-#        f.write(gexf.open_attributes("edges"))
-#        f.write(gexf.open_attribute("0","uri","string"))
-#        f.write(gexf.close_attribute())
-#        f.write(gexf.close_attributes())
-        
-        f.write(gexf.open_nodes())
-        for object in self.te.objects.keys():
-            value = self.te.objects[object]
-            if object[0] == "l":
-                associated_triples_address = self.te.objects_index[object]
-                for triple_address in associated_triples_address:
-                    f.write(gexf.open_node("t" + str(triple_address),value))
-                    f.write(gexf.close_node())
-            else:
-                f.write(gexf.open_node(object,value))
-                f.write(gexf.close_node())
-        f.write(gexf.close_nodes())
-        
-        f.write(gexf.open_edges())
-        
-        for triple_addr in self.te.triples.keys():
-            triple = self.te.triples[triple_addr]
-            if triple[2][0] == "l":
-                f.write(gexf.open_edge(triple_addr,triple[0],"t" + str(triple_addr)))
-            else:
-                f.write(gexf.open_edge(triple_addr,triple[0],triple[2]))
-            f.write(gexf.close_edge())
-        
-        f.write(gexf.close_edges())
-        
-        f.write(gexf.close_graph())
-        f.write(gexf.close_xml())
+
         
