@@ -7,8 +7,6 @@ import re
 import shelve
 import os
 
-from gexf import GephiGexf
-
 class SimpleNTriplesLineReactor(object):
     """
         A skeleton class for writing simple triple action reactor.  
@@ -32,7 +30,7 @@ class SimpleNTriplesLineReactor(object):
     def process(self):
         """Begin the process of a set of ntriples"""
         for unread_statement in self.iterable_stream:
-            matching_result = self.match_function(unread_statement)
+            matching_result = self.matching_function(unread_statement)
             if matching_result:
                 self.result_obj = self.call_back_function(matching_result, self.result_obj)
     
@@ -94,9 +92,9 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
         triples = []
         triple_types = ""
         triples_parsed = []
-       
+
         while i < len(line) or (i == len(line) and state =="TripleEnd"):
-            
+
             if state == "TripleStart":
                 if line[i] == "<":
                     state = "UriStart"
@@ -104,17 +102,17 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                 elif line[i] == "_":
                     state = "BlankNodeStart"
                     start_state_position = i
-                    
+
                 elif line[i] == "#":
                     state = "Comment"
                     triple_types += "c"
-                    
+
             elif state == "UriStart":
                 if line[i] == ">":
                     state = "UriEnd"
                     triples.append(line[start_state_position:i])
                     triple_types += "u"
-                    
+
             elif state == "UriEnd":
                 if line[i] == '"':
                     state = "LiteralStart"
@@ -137,7 +135,7 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                     state = "TripleEnd"
                     triples.append(line[start_state_position:i])
                     triple_types += "b"
-                    
+
             elif state == "LiteralStart":
                 if line[i] == '"' and line[i-1] != "\\":
                     state = "LiteralEnd"
@@ -147,18 +145,18 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                     state = "LiteralEnd"
                     triples.append(line[start_state_position:i])
                     triple_types += "l"
-                    
+
             elif state == "LiteralEnd":
                 if line[i] == ".":
                     state = "TripleEnd"
-                    
+
             elif state == "BlankNodeEnd":
                 if line[i] == ".":
                     state = "TripleEnd"
                 elif line[i] == "<":
                     state = "UriStart"
                     start_state_position = i + 1
-                    
+
             elif state == "TripleEnd":
                 if triple_types in ["uuu","uul","buu","uub", "bul"]:
                     triples_parsed.append(SimpleTriple(triples[0], triples[1], triples[2],triple_types))
@@ -166,14 +164,14 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                     triple_types = ""
                 elif "x" in triple_types:
                     raise RuntimeError, "Error parsing file"
-                
+
                 if i < len(line):
                     if line[i] == '\r' or line[i] == '\n':
                         state="TripleStart"
             i += 1
-            
+
         return triples_parsed
-        
+
 class SimpleTriple(object):
     """A basic container for a triple"""
     def __init__(self,subject,predicate,object,triple_type="uuu"):
@@ -193,8 +191,25 @@ class SimpleTriple(object):
         return (self.subject, self.predicate, self.object)
     def __repr__(self):
         return str(self.to_tuple())
- 
     
+    def to_ntriple(self):
+        ntriple_string = ""
+        if self.subject_type() == 'u':
+            ntriple_string = "<%s> " % self.subject
+        else:
+            ntriple_string = "%s " % self.subject
+
+        ntriple_string += "<%s> " % self.predicate
+
+        if self.object_type() == 'u':
+            ntriple_string += "<%s> " % self.object
+        elif self.object_type() == 'l':
+            ntriple_string += '"%s"' % self.object
+        else:
+            ntriple_string += self.object
+        ntriple_string += " .\n"
+        return ntriple_string
+
 class TripleEngine(object):
     """Abstract class for native triplestore in Python"""
     
@@ -316,23 +331,32 @@ class SimpleTripleStore(object):
     def _decode_address(self,address):
         return self.te.objects[address]
     
-    def _decode_triple_symbols(self,triple_address):
-        triple = self.te.objects[triple_address]
-        t1 = self._decode_address(triple[0])
-        t2 = self._decode_address(triple[1])
-        t3 = self._decode_address(triple[2])
-        return (t1,t2,t3)
-    
     def _decode_triple(self,triple_address):
         """Given an address to a triple decodes it without ntriples formatting,
         as an example the uri http://example.org is not shown as 
         <http://example.org>
         """
-        triple = self.te.objects[triple_address]
+        triple = self.te.triples[triple_address]
         t1 = self._decode_address(triple[0])
         t2 = self._decode_address(triple[1])
         t3 = self._decode_address(triple[2])
         return (t1,t2,t3)
+
+
+
+    def triple_address_to_simple_triple(self,triple_address):
+        """Given an address to a triple returns a triple Simple Object"""
+        triple = self.te.triples[triple_address]
+
+        triple_type = ""
+        for x in triple:
+            triple_type += x[0:1]
+
+        t1 = self._decode_address(triple[0])
+        t2 = self._decode_address(triple[1])
+        t3 = self._decode_address(triple[2])
+
+        return SimpleTriple(t1, t2, t3, triple_type)
     
     def _format_symbol(self,symbol, object_type):
         if object_type == "u":
@@ -371,7 +395,7 @@ class SimpleTripleStore(object):
             return 0
         
     def subjects(self,uri):
-        """For a subject specifeid by a uri return all associated triples"""
+        """For a subject specified by a uri return all associated triples"""
         if uri[0] == "<" and uri[-1] ==  ">":
             uri = uri[1:-1]
         uri_addr = self._encode_uri(uri)
@@ -407,7 +431,7 @@ class SimpleTripleStore(object):
         return f
         
     def export_to_ntriples_string(self):
-        """Export ntriples to an memory string"""
+        """Export ntriples to an in memory string"""
         nt = ""
         for key in self.te.triples.iterkeys():
             triple = self._decode_triple_formatted(key)
@@ -430,7 +454,6 @@ class SimpleTripleStore(object):
             keys_with_len.append((key,len(hash_index[key])))
             
         keys_with_len.sort(key=lambda x: x[1],reverse=True)
-        
         return keys_with_len
     
     def _top_items(self,hash_index,top_n=None):
@@ -454,4 +477,27 @@ class SimpleTripleStore(object):
         """Returns a list of top used predicates"""
         return self._top_items(self.te.predicates_index,top_n)
 
-        
+    def iterator_triples(self):
+        return IteratorTripleStore(self)
+
+    def iterator_ntriples(self):
+        return IteratorTripleStoreNtriple(self)
+
+
+
+class IteratorTripleStore(object):
+    def __init__(self,triple_engine):
+        self.triple_engine = triple_engine
+        self.triple_address_iterator = self.triple_engine.te.triples.iterkeys()
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        triple_address = self.triple_address_iterator.next()
+        return self.triple_engine.triple_address_to_simple_triple(triple_address)
+
+class IteratorTripleStoreNtriple(IteratorTripleStore):
+    def next(self):
+        triple_address = self.triple_address_iterator.next()
+        return self.triple_engine.triple_address_to_simple_triple(triple_address).to_ntriple()
