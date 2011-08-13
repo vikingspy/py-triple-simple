@@ -2,7 +2,6 @@ __author__ = 'janos'
 
 import re
 
-
 class Lexer(object):
     def __init__(self):
         self.regex_rules = re.compile(r"[ ]")
