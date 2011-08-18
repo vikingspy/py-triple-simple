@@ -1,0 +1,62 @@
+<http://acme.com/rdf#ndc/0000000001> <http://acme.com/rdf#isLabeller> <http://acme.com/rdf#company/1> . 
+<http://acme.com/rdf#ndc/0000000002> <http://acme.com/rdf#isLabeller> <http://acme.com/rdf#company/2> . 
+<http://acme.com/rdf#ndc/0000000003> <http://acme.com/rdf#isLabeller> <http://acme.com/rdf#company/2> . 
+<http://acme.com/rdf#ndc/0000000004> <http://acme.com/rdf#isLabeller> <http://acme.com/rdf#company/3> . 
+<http://acme.com/rdf#company/1> <http://acme.com/rdf#hasAddress> <http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> . 
+<http://acme.com/rdf#company/2> <http://acme.com/rdf#hasAddress> <http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> . 
+<http://acme.com/rdf#company/3> <http://acme.com/rdf#hasAddress> <http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> . 
+<http://acme.com/rdf#ndc/0000000001> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#ndc> .
+<http://acme.com/rdf#ndc/0000000001> <http://www.w3.org/2000/01/rdf-schema#label> "Acme Creme" .
+<http://acme.com/rdf#ndc/0000000002> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#ndc> .
+<http://acme.com/rdf#ndc/0000000002> <http://www.w3.org/2000/01/rdf-schema#label> "Coyote Annoyance Tablets" .
+<http://acme.com/rdf#ndc/0000000003> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#ndc> .
+<http://acme.com/rdf#ndc/0000000003> <http://www.w3.org/2000/01/rdf-schema#label> "Road Runner Darting Pills" .
+<http://acme.com/rdf#ndc/0000000004> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#ndc> .
+<http://acme.com/rdf#ndc/0000000004> <http://www.w3.org/2000/01/rdf-schema#label> "Wacky Data" .
+<http://acme.com/rdf#company/1> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#company> .
+<http://acme.com/rdf#company/1> <http://www.w3.org/2000/01/rdf-schema#label> "Acme LLC" .
+<http://acme.com/rdf#company/2> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#company> .
+<http://acme.com/rdf#company/2> <http://www.w3.org/2000/01/rdf-schema#label> "Acme Inc" .
+<http://acme.com/rdf#company/3> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#company> .
+<http://acme.com/rdf#company/3> <http://www.w3.org/2000/01/rdf-schema#label> "Acme Building Supplies Inc" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#address> .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://www.w3.org/2000/01/rdf-schema#label> "1 Crazy Loopy Lane;Hollywood;CA;90210" .
+<http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://acme.com/rdf#address> .
+<http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> <http://www.w3.org/2000/01/rdf-schema#label> "2 Crazy Loopy Lane;Hollywood;CA;90210" .
+<http://acme.com/rdf#ndc/0000000001> <http://acme.com/rdf#ndc/date_issued> "Jan  1 1955 12:00AM" .
+<http://acme.com/rdf#ndc/0000000002> <http://acme.com/rdf#ndc/date_issued> "Jan  1 1990 12:00AM" .
+<http://acme.com/rdf#ndc/0000000003> <http://acme.com/rdf#ndc/date_issued> "Sep  9 1999 12:00AM" .
+<http://acme.com/rdf#ndc/0000000004> <http://acme.com/rdf#ndc/date_issued> "None" .
+<http://acme.com/rdf#ndc/0000000001> <http://acme.com/rdf#ndc/quantity> "10000" .
+<http://acme.com/rdf#ndc/0000000002> <http://acme.com/rdf#ndc/quantity> "1000" .
+<http://acme.com/rdf#ndc/0000000003> <http://acme.com/rdf#ndc/quantity> "100" .
+<http://acme.com/rdf#ndc/0000000004> <http://acme.com/rdf#ndc/quantity> "100" .
+<http://acme.com/rdf#company/1> <http://acme.com/rdf#company/labeller> "Acme LLC" .
+<http://acme.com/rdf#company/2> <http://acme.com/rdf#company/labeller> "Acme Inc" .
+<http://acme.com/rdf#company/3> <http://acme.com/rdf#company/labeller> "Acme Building Supplies Inc" .
+<http://acme.com/rdf#company/1> <http://acme.com/rdf#company/flattened> "1 Crazy Loopy Lane;Hollywood;CA;90210" .
+<http://acme.com/rdf#company/2> <http://acme.com/rdf#company/flattened> "2 Crazy Loopy Lane;Hollywood;CA;90210" .
+<http://acme.com/rdf#company/3> <http://acme.com/rdf#company/flattened> "1 Crazy Loopy Lane;Hollywood;CA;90210" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/city> "Hollywood" .
+<http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> <http://acme.com/rdf#company/city> "Hollywood" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/city> "Hollywood" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/state> "CA" .
+<http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> <http://acme.com/rdf#company/state> "CA" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/state> "CA" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/zip> "90210" .
+<http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> <http://acme.com/rdf#company/zip> "90210" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/zip> "90210" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/street_address> "1 Crazy Loopy Lane" .
+<http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> <http://acme.com/rdf#company/street_address> "2 Crazy Loopy Lane" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/street_address> "1 Crazy Loopy Lane" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/sha1> "21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD" .
+<http://acme.com/rdf#address82C4342936A051D308658268E90453FA103D1DA6> <http://acme.com/rdf#company/sha1> "82C4342936A051D308658268E90453FA103D1DA6" .
+<http://acme.com/rdf#address21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD> <http://acme.com/rdf#company/sha1> "21A8ED20C9BC734FE54AC30681A6F2E6076F4CCD" .
+<http://acme.com/rdf#company> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://acme.com/rdf#company> <http://www.w3.org/2000/01/rdf-schema#label> "Acme Ontology for Companies" .
+<http://acme.com/rdf#address> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://acme.com/rdf#address> <http://www.w3.org/2000/01/rdf-schema#label> "Acme Ontology for Addresses" .
+<http://acme.com/rdf#ndc> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2000/01/rdf-schema#Class> .
+<http://acme.com/rdf#ndc> <http://www.w3.org/2000/01/rdf-schema#label> "Acme Ontology for Drugs" .
+<http://acme.com/rdf#hasAddress> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
+<http://acme.com/rdf#isLabeller> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/1999/02/22-rdf-syntax-ns#Property> .
