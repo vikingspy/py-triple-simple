@@ -4,8 +4,8 @@ Classes for processing and working with files that follow the ntriples format.
 """
 
 import re
-import shelve
-import os
+
+common_prefixes = {"rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"}
 
 class SimpleNTriplesLineReactor(object):
     """
@@ -28,7 +28,7 @@ class SimpleNTriplesLineReactor(object):
         return result_obj
     
     def process(self):
-        """Begin the process of a set of ntriples"""
+        """Begin the processing a set of ntriples"""
         for unread_statement in self.iterable_stream:
             matching_result = self.matching_function(unread_statement)
             if matching_result:

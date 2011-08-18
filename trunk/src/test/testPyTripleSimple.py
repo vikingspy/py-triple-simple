@@ -23,6 +23,7 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         self.assertEquals(30,len(result1),"Wrong number of triples iterated")
         result2 = list(ts.iterator_ntriples())
         self.assertEquals(30,len(result1),"Wrong number of triples iterated")
+        
 
 if __name__ == '__main__':
     unittest.main()
