@@ -5,6 +5,7 @@ import pyTripleSimple
 import urllib
 import os
 import string
+import time
 
 rdfs_label = pyTripleSimple.common_prefixes["rdfs"] + "label"
 
@@ -20,7 +21,7 @@ class FreeTextLexer(Lexer):
         self.regex_rules = re.compile(r"[ \t\n\.\!\?,;]+")
 
 class FreeTextSimpleTripleStore(object):
-    "Generates a free text index of a SimpleTripleStore"
+    """Generates a free text index of a SimpleTripleStore"""
     def __init__(self, triple_simple_store, predicates_to_index = [rdfs_label]):
         self.predicate_for_word = "http://www.w3.org/2001/sw/BestPractices/WNET/wordnet-sw-20040713.html#Word"
         self.triple_simple_store = triple_simple_store
@@ -49,5 +50,32 @@ class FreeTextSimpleTripleStore(object):
             f.close()
             file_names_to_write.append(file_name_to_write)
         return file_names_to_write
+
+
+def main(ntriples_file_name,free_text_predicates=None):
+    f = open(ntriples_file_name,"r")
+
+    ts = pyTripleSimple.SimpleTripleStore() #pyTripleSimple.ShelveTripleEngine(ntriples_file_name)
+
+    print('Loading "%s"' % os.path.abspath(ntriples_file_name))
+    start_time = time.clock()
+    ts.load_ntriples(f)
+    end_time = time.clock()
+    print("Finished loading ntriples file")
+    #print("Number of triples %s loaded in %s seconds (%s triples/second)" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
+
+    if free_text_predicates is not None:
+        ft = FreeTextSimpleTripleStore(ts, predicates_to_index = free_text_predicates)
+    else:
+        ft = FreeTextSimpleTripleStore(ts)
+
+    ft.generate()
+    file_names = ft.write_out_to_ntriples(ntriples_file_name + ".")
+
+    print("Generated free text triples '%s'" % ntriples_file_name)
+    for file_name in file_names:
+        print("Wrote '%s'" % file_name)
+
+    return file_names
             
 
