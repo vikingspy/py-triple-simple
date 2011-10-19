@@ -12,7 +12,13 @@ import pprint
 
 import pyTripleSimple
 
-def main(ntriples_file_name):
+def main(ntriples_file_name,display_n=50):
+
+    if display_n == "All":
+        display_n = None
+    else:
+        display_n=int(display_n)
+
     f = open(ntriples_file_name,"r")
 
     ts = pyTripleSimple.SimpleTripleStore() #pyTripleSimple.ShelveTripleEngine(ntriples_file_name)
@@ -33,11 +39,11 @@ def main(ntriples_file_name):
     print("Number of distinct objects including literals: %s" % ts.n_objects())
     print("Number of literals: %s" % ts.n_literals())
     print("")
-    print("Top 50 subjects are:")
-    pprint.pprint(ts.top_subjects(50))
+    print("Top subjects are:")
+    pprint.pprint(ts.top_subjects(display_n))
     print("")
-    print("Top 50 objects are:")
-    pprint.pprint(ts.top_objects(50))
+    print("Top objects are:")
+    pprint.pprint(ts.top_objects(display_n))
     print("")
     print("Top predicates are:")
     pprint.pprint(ts.top_predicates(None))
@@ -46,5 +52,7 @@ if __name__ == "__main__":
     
     if len(sys.argv) == 1:
         main("reach.nt")
-    else:
+    elif len(sys.argv) == 2:
         main(sys.argv[1])
+    else:
+        main(sys.argv[1],sys.argv[2])

@@ -483,8 +483,6 @@ class SimpleTripleStore(object):
     def iterator_ntriples(self):
         return IteratorTripleStoreNtriple(self)
 
-
-
 class IteratorTripleStore(object):
     def __init__(self,triple_engine):
         self.triple_engine = triple_engine
