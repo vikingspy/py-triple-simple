@@ -2,7 +2,7 @@ __author__ = 'Janos G. Hajagos'
 
 import unittest
 import FreeTextTriples
-#import pprint
+import pprint
 import pyTripleSimple
 
 class testBasicWordExtraction(unittest.TestCase):
@@ -52,5 +52,13 @@ class testBasicWordExtraction(unittest.TestCase):
         result_set = list(ts_result.iterator_ntriples())
         self.assertTrue(len(result_set))
 
+        print(result_set)
+
+    def test_expansion(self):
+        abstract = "Objective Age is known to influence the risk of both cerebral ischemic lesions and impaired cognitive function. Diabetes mellitus (DM) can also be associated with cognitive impairment. However, there has been no study of neuropsychological performance in association with glucose metabolism status and cerebral ischemic lesions in same-aged, community-dwelling elderly persons. The present study was performed to clarify which cognitive domains are associated with impaired glucose metabolism/DM and whether the association is independent of cerebral ischemic lesions. Subjects and Methods A total of 172 residents in Takahata, Japan, all of whom were 78 years old, were evaluated in multiple domains through neuropsychological tests and brain MR images, as well as a medical check-up including tests for glucose metabolism status and conventional vascular risk factors. Glucose metabolism status was determined by analysis of HbA1c level. Results In multiple regression analyses, performance on a verbal fluency (VF) test and the Trail Making Test-Part B, both of which represent executive function, was associated with HbA1c level, even after adjustment for sex, education, cerebral ischemic lesions, and conventional vascular risk factors. The subjects with DM also showed lower VF scores than did those without DM. Conclusion The results of the present study demonstrate that impaired glucose metabolism, independent of the conventional vascular risk factors and cerebral ischemic lesions, may be associated with a decline in executive function in community-dwelling elderly."
+        f = FreeTextTriples.FreeTextExpander(4)
+        r = f.parse(abstract)
+        pprint.pprint(r)
+        print(len(r))
 if __name__ == '__main__':
     unittest.main()

@@ -18,12 +18,35 @@ class Lexer(object):
 
 class FreeTextLexer(Lexer):
     def __init__(self):
-        self.regex_rules = re.compile(r"[ \t\n\.\!\?,;]+")
+        self.regex_rules = re.compile(r"[ \t\n\.\!\?,;\:]+")
+
+class FreeTextExpander(object):
+    def __init__(self, n_words_look_ahead):
+        self.n_words_look_ahead = n_words_look_ahead
+        self.regex_rules = re.compile(r"[ \t\n\.\!\?,;\:]+")
+    def parse(self, phrase):
+        match_positions = [(x.start(),x.end()) for x in list(self.regex_rules.finditer(" " + phrase))]
+        word_boundaries = []
+        for i in range(len(match_positions)-1):
+            word_boundaries.append((match_positions[i][1], match_positions[i+1][0]))
+
+        number_of_words = len(word_boundaries)
+        words_phrases = []
+        for i in range(number_of_words):
+            word_phrase = []
+            for j in range(self.n_words_look_ahead):
+                if i+j < number_of_words:
+                    word_phrase.append(phrase[word_boundaries[i][0]-1:word_boundaries[i+j][1]-1])
+            words_phrases.append(word_phrase)
+        return words_phrases
+
+        
+
 
 class FreeTextSimpleTripleStore(object):
     """Generates a free text index of a SimpleTripleStore"""
     def __init__(self, triple_simple_store, predicates_to_index = [rdfs_label]):
-        self.predicate_for_word = "http://www.w3.org/2001/sw/BestPractices/WNET/wordnet-sw-20040713.html#Word"
+        self.predicate_for_word = "http://vivoweb.org/ontology/core#freetextKeyword"
         self.triple_simple_store = triple_simple_store
         self.predicates_to_index = predicates_to_index
         self.lexer = FreeTextLexer()
