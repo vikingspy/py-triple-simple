@@ -379,7 +379,7 @@ class SimpleTripleStore(object):
         return (t1,t2,t3)
     
     def _encode_uri(self,uri):
-        """Encode a uri into a referencable address"""
+        """Encode a uri into a referenceable address"""
         if self.te.symbols.has_key(uri):
             sym_addr = self.te.symbols[uri]
             return 'u' + str(sym_addr)
@@ -387,17 +387,21 @@ class SimpleTripleStore(object):
             return 0
         
     def _encode_literal(self,literal):
-        """Encode a literal into a referencable address"""
-        if self.symbol.has_key(literal):
+        """Encode a literal into a referenceable address"""
+        if self.te.symbols.has_key(literal):
             sym_addr = self.te.symbols[literal]
-            return 'l' + sym_addr
+            return 'l' + str(sym_addr)
         else:
             return 0
+
+    def _uri_check(self,uri):
+        if uri[0] == "<" and uri[-1] ==  ">":
+            uri = uri[1:-1]
+        return uri
         
     def subjects(self,uri):
         """For a subject specified by a uri return all associated triples"""
-        if uri[0] == "<" and uri[-1] ==  ">":
-            uri = uri[1:-1]
+        uri = self._uri_check(uri)
         uri_addr = self._encode_uri(uri)
         if uri_addr:
             if self.te.subjects_index.has_key(uri_addr):
@@ -405,8 +409,7 @@ class SimpleTripleStore(object):
             
     def objects(self,uri):
         """For an object specified by uri return all associated triples"""
-        if uri[0] == "<" and uri[-1] ==  ">":
-            uri = uri[1:-1]
+        uri = self._uri_check(uri)
         uri_addr = self._encode_uri(uri)
         
         if uri_addr:
@@ -415,8 +418,7 @@ class SimpleTripleStore(object):
         
     def predicates(self,uri):
         """For an object specified by uri return all associated triples"""
-        if uri[0] == "<" and uri[-1] ==  ">":
-            uri = uri[1:-1]
+        uri = self._uri_check(uri)
         uri_addr = self._encode_uri(uri)
         
         if uri_addr:
@@ -482,6 +484,125 @@ class SimpleTripleStore(object):
 
     def iterator_ntriples(self):
         return IteratorTripleStoreNtriple(self)
+
+
+    def _raw_find_triples(self,subjects_address,predicates_address,objects_address):
+
+        n_subjects = len(subjects_address)
+        n_objects = len(objects_address)
+        n_predicates = len(predicates_address)
+
+        if n_subjects:
+            subjects_set = set()
+            for subject_address in subjects_address:
+                subjects_set = subjects_set.union(set(self.te.subjects_index[subject_address]))
+            triples_set = subjects_set
+
+        if n_predicates:
+            predicates_set = set()
+            for predicate_address in predicates_address:
+                predicates_set = predicates_set.union(set(self.te.predicates_index[predicate_address]))
+            if n_subjects:
+                triples_set = triples_set.intersection(predicates_set)
+            else:
+                triples_set = predicates_set
+
+        if n_objects:
+            objects_set = set()
+            for object_address in objects_address:
+                objects_set = objects_set.union(set(self.te.objects_index[object_address]))
+            if n_predicates + n_subjects > 0:
+                triples_set = triples_set.intersection(objects_set)
+            else:
+                triples_set = objects_set
+
+        if n_subjects + n_predicates + n_objects == 0:
+            triples_set = set(range(len(self.te.triples)))
+
+
+        return triples_set
+
+    def find_triples(self,subjects=None, predicates = None, objects = None, literals = None, return_type="raw"):
+        """Find triples which match criteria: If nothing is given will return None.
+            The input parameters for subjects, predicates, and objects can either be a string or an iterable"""
+
+        if type(subjects) == type(""):
+            subjects = [subjects]
+
+        if type(predicates) == type(""):
+            predicates = [predicates]
+
+        if type(objects) == type(""):
+            objects = [objects]
+
+        if type(literals) == type(""):
+            literals = [literals]
+
+        if subjects is None and objects is None and predicates is None and literals is None:
+            return None
+
+        subjects_encoded = []
+        objects_encoded = []
+        predicates_encoded = []
+        literals_encoded = []
+        
+        if subjects is not None:
+            for subject in subjects:
+                subject = self._uri_check(subject)
+                subject_address = self._encode_uri(subject)
+                if subject_address:
+                    if self.te.subjects_index.has_key(subject_address):
+                        subjects_encoded.append(subject_address)
+
+        if objects is not None:
+            for object in objects:
+                object = self._uri_check(object)
+                object_address = self._encode_uri(object)
+                if object_address:
+                    if self.te.objects_index.has_key(object_address):
+                        objects_encoded.append(object_address)
+
+        if predicates is not None:
+            for predicate in predicates:
+                predicate = self._uri_check(predicate)
+                predicate_address = self._encode_uri(predicate)
+                if predicate_address:
+                    if self.te.predicates_index.has_key(predicate_address):
+                        predicates_encoded.append(predicate_address)
+
+        if literals is not None:
+            for literal in literals:
+                literal_address = self._encode_literal(literal)
+                if literal_address:
+                    if self.te.objects_index.has_key(literal_address):
+                        literals_encoded.append(literal_address)
+
+            
+        if (len(subjects_encoded) + len(objects_encoded) + len(predicates_encoded) + len(literals_encoded))  == 0:
+            return set([])
+        elif subjects is not None and len(subjects) > 0 and len(subjects_encoded) == 0:
+            return set([])
+        elif predicates is not None and len(predicates) > 0 and len(predicates_encoded) == 0:
+            return set([])
+        elif objects is not None or literals is not None:
+            if objects is not None and literals is None:
+                if len(objects) > 0 and len(objects_encoded) == 0:
+                    return set([])
+            elif literals is not None and objects is None:
+                if len(literals) > 0 and len(literals_encoded) == 0:
+                    return set([])
+            else:
+                if len(literals + objects) > 0 and len(literals_encoded + objects_encoded) == 0:
+                    return set([])
+
+        raw_results = self._raw_find_triples(subjects_encoded, predicates_encoded, objects_encoded + literals_encoded)
+
+        if return_type == "raw":
+            return raw_results
+        elif return_type == "triples":
+            pass
+        elif return_type == "ntriples":
+            pass
 
 class IteratorTripleStore(object):
     def __init__(self,triple_engine):

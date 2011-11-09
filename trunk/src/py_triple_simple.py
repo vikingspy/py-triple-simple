@@ -36,8 +36,11 @@ def main(ntriples_file_name,display_n=50):
     
     print("Number of distinct subjects: %s" % ts.n_subjects())
     print("Number of distinct predicates: %s" % ts.n_predicates())
-    print("Number of distinct objects including literals: %s" % ts.n_objects())
-    print("Number of literals: %s" % ts.n_literals())
+    n_objects = ts.n_objects()
+    print("Number of distinct objects including literals: %s" % n_objects)
+    n_literals = ts.n_literals()
+    print("Number of literals: %s" % n_literals)
+    print("Fraction of objects that are literals: %s" % ((n_literals * 1.0) / n_objects ))
     print("")
     print("Top subjects are:")
     pprint.pprint(ts.top_subjects(display_n))
