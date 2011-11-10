@@ -600,15 +600,151 @@ class SimpleTripleStore(object):
         if return_type == "raw":
             return raw_results
         elif return_type == "triples":
-            pass
+            return [self.triple_engine.triple_address_to_simple_triple(triple_address) for triple_address in raw_results]
         elif return_type == "ntriples":
             pass
 
+    def simple_pattern_match(self, pattern, restrictions = [], output_variables = [], output_function = None):
+        """
+        Patterns are simple Python structures which have a structure:
+            [('a1','p1','a2'),('a2','p2','a1')]
+        this pattern would find all triples which have links in both direction.
+
+        Additional patterns include:
+        [('a','b','c','d','e')] or the equivalent [('a','b','c'),('c','d','e')]
+
+        Another pattern:
+        [('a','b','c'),('a','b','d')]
+        This would return a result for all triples because of a self match. We need to specify a restriction.
+
+        Restrictions are specified in a list:
+
+        ('c','!=','d')
+        ('c','==','d',string.lower, string.lower)
+        ('e','in',[<http://example.org/property1>','<http://example.org/property2>'])
+        ('g','not in',[str(x) for x in range(5)]) => ['g','not in',['0','1','2','3',4'])
+
+        Restrictions on variables currently support '==' and '!=' .
+        Restrictions on literals and URIs are support 'in', and 'not in'
+
+        Dictionaries with lists are used to specify filtering of the pattern.
+        Restrictions are applied in the order that they are received and are applied only once.
+
+        Output variables are specified in a list ['p1','p2']. By default answers will be aggregated and returned as list
+        descending occurrence [(('<http://example.org/property/1>','<http://example.org/property/2>'), 50)]
+
+        If output variables are set to null will only use a function. If output variables are not null will return
+        the standard list and application of function to the results.
+        """
+
+    def _check_restrictions(self, restrictions):
+        return restrictions
+
+    def _process_restrictions(self, restrictions):
+        pass
+
+class TriplePatterns(object):
+    def __init__(self,patterns):
+        self.original_patterns = patterns
+        self.checked_patterns = self.check_patterns()
+        self.variables = {}
+        self._process_variables()
+        
+    def check_patterns(self):
+        if type(self.original_patterns) != type([]):
+            raise RuntimeError, 'Patterns must be in a list'
+
+        checked_patterns = []
+        for pattern in self.original_patterns:
+
+            if len(pattern) < 3:
+                raise RuntimeError, 'Pattern must have a minimum length of 3'
+            elif len(pattern) == 3:
+                checked_patterns.append(pattern)
+            else:
+                aligned_i = 1
+                start_i = 0
+                for i in range(len(pattern)):
+                    if i > 0 and (aligned_i % 3) == 0:
+                        checked_patterns.append(tuple(pattern[start_i:(i+1)]))
+                        start_i = i
+                        aligned_i += 1
+                    aligned_i += 1
+        for checked_pattern in checked_patterns:
+            if len(checked_pattern) == 3:
+                
+                if type(checked_pattern[0]) == type(""):
+                    pass
+                else:
+                    raise RuntimeError, "variable in pattern must be a string"
+
+                if type(checked_pattern[1]) == type(""):
+                    pass
+                else:
+                    raise RuntimeError, "variable in pattern must be a string"
+                if type(checked_pattern[2]) == type(""):
+                    pass
+                else:
+                    raise RuntimeError, "variable in pattern must be a string"
+            else:
+                raise RuntimeError, "Pattern length is not correct"
+
+        return checked_patterns
+
+    def _process_variables(self):
+        variable_position = 0
+        for pattern in self.checked_patterns:
+            for variable in pattern:
+                if variable in self.variables:
+                    pass
+                else:
+                    self.variables[variable] = variable_position
+                    variable_position += 1
+
+class TripleRestrictions(object):
+    def __init__(self, restrictions, variables = None):
+        self.variables = variables
+        self.original_restrictions = restrictions
+        self.processed_restrictions = ""
+        self._check_restrictions()
+        self.restrictions_variables = {}
+        self._process_restrictions()
+
+    def _check_restrictions(self):
+        if type(self.original_restrictions) != type([]):
+            raise RuntimeError, "Restrictions must be in a list"
+        for restriction in self.original_restrictions:
+            if len(restriction) == 3 or len(restriction) == 4 or len(restriction) == 5:
+                pass
+            else:
+                raise RuntimeError, "Restriction is of wrong length"
+            if restriction[1] not in ("==","!=","in", "not in"):
+                raise RuntimeError, "Unsupported restriction type '%s'" % restriction[1]
+
+    def _process_restrictions(self):
+        i = 0
+        for restriction in self.original_restrictions:
+            variable1 = restriction[0]
+            if variable1 not in self.restrictions_variables:
+                self.restrictions_variables[variable1] = [i]
+            else:
+                self.restrictions_variables[variable1].append(i)
+            if restriction[1] in ["==", "!="]:
+                variable2 = restriction[2]
+                if variable2 not in self.restrictions_variables:
+                    self.restrictions_variables[variable2] = [i]
+                else:
+                    self.restrictions_variables[variable2].append(i)
+            i += 1
+            print(self.restrictions_variables)
+
+    def encode_restrictions(self):
+        pass
+    
 class IteratorTripleStore(object):
     def __init__(self,triple_engine):
         self.triple_engine = triple_engine
         self.triple_address_iterator = self.triple_engine.te.triples.iterkeys()
-
     def __iter__(self):
         return self
 

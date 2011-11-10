@@ -59,6 +59,33 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         r10 = ts.find_triples("<http://example.org/resource14>", "<http://example.org/property>", objects="x")
         self.assertEquals(0,len(r10))
 
+class  TestTriplePatterns(unittest.TestCase):
+    def setup(self):
+        pass
+    def test_patterns(self):
+        pattern1 = [('a','b','c')]
+        pattern_obj1 = pyTripleSimple.TriplePatterns(pattern1)
+
+        self.assertEquals(3,len(pattern_obj1.variables))
+
+        pattern2 = [('a','b','c','d','e')]
+        pattern_obj2 = pyTripleSimple.TriplePatterns(pattern2)
+        self.assertEquals(2,len(pattern_obj2.checked_patterns))
+
+        self.assertEquals(5,len(pattern_obj2.variables))
+
+        print(pattern_obj2.variables)
+
+        pattern3 = [('a','b','c','d','e','f','g')]
+        pattern_obj3 = pyTripleSimple.TriplePatterns(pattern3)
+        self.assertEquals(3,len(pattern_obj3.checked_patterns))
+
+class  TestTripleRestrictions(unittest.TestCase):
+    def setup(self):
+        pass
+    def test_restrictions(self):
+        restrictions1 = [("a","!=","b"),("a", "in", ("<http://example.org/1>","<http://example.org/2>"))]
+        restrictions1_obj = pyTripleSimple.TripleRestrictions(restrictions1)
 
 
 if __name__ == '__main__':
