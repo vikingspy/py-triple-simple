@@ -65,7 +65,7 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         ts.load_ntriples(f)
 
         r1 = ts.simple_pattern_match([("a","p","b")],[("p","in",["<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"])],("b"))
-        self.assertEquals(2,len(r1))
+        self.assertEquals(5,len(r1))
 
 class  TestTriplePatterns(unittest.TestCase):
     def setup(self):
