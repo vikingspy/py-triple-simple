@@ -4,6 +4,7 @@ Classes for processing and working with files that follow the ntriples format.
 """
 
 import re
+import pprint
 
 common_prefixes = {"rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"}
 
@@ -618,7 +619,7 @@ class SimpleTripleStore(object):
         elif return_type == "ntriples":
             pass
 
-    def simple_pattern_match(self, patterns, restrictions = [], output_variables = [], output_function = None):
+    def simple_pattern_match(self, patterns, restrictions = [], solution_variables = [], output_function = None):
         """
         Patterns are simple Python structures which have a structure:
             [('a1','p1','a2'),('a2','p2','a1')]
@@ -776,7 +777,33 @@ class SimpleTripleStore(object):
             solution_length = extended_solution_length
             potential_solution_list = updated_solution_list
             i += 0
-        return potential_solution_list
+
+        #Process solution
+        solution_variables_position = []
+        solution_dict = {}
+        for solution_variable in solution_variables:
+            solution_variables_position.append(patterns_obj.variables()[solution_variable])
+
+        for solution in potential_solution_list:
+            solution_key_list = []
+            for position in solution_variables_position:
+                solution_key_list.append(solution[position])
+            solution_key = tuple(solution_key_list)
+            if solution_key in solution_dict:
+                solution_dict[solution_key] += 1
+            else:
+                solution_dict[solution_key] = 1
+
+        solutions_list = []
+        for solution_key in solution_dict.keys():
+            solutions = []
+            for solution_encoded in solution_key:
+                solution_decoded = self._decode_address_formatted(solution_encoded)
+                solutions.append(solution_decoded)
+            solutions_list.append([solutions,solution_dict[solution_key]])
+
+        pprint.pprint(solutions_list)
+        return solutions_list
 
 
 class TriplePatterns(object):
