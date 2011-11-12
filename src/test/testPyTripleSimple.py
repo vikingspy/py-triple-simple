@@ -67,6 +67,9 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         r1 = ts.simple_pattern_match([("a","p","b")],[("p","in",["<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"])],("b"))
         self.assertEquals(5,len(r1))
 
+        r2 = ts.simple_pattern_match([("a","p","b")],[("p","in",["<http://example.org/predicateDoesNotExist>"])],("b"))
+        self.assertEquals(0,len(r2))
+
 class  TestTriplePatterns(unittest.TestCase):
     def setup(self):
         pass

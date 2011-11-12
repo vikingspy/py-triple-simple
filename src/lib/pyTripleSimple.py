@@ -700,20 +700,28 @@ class SimpleTripleStore(object):
 
             updated_solution_list = []
             if subjects is not None and variable1_position > solution_length:
+                original_subjects_length = len(subjects)
                 subjects = self._encode_subjects(subjects)
             else:
+                original_subjects_length = 0
                 subjects = []
             if objects is not None and variable3_position > solution_length:
+                original_objects_length = len(objects)
                 objects = self._encode_objects(objects)
             else:
                 objects = []
+                original_objects_length = 0
             if predicates is not None and variable2_position > solution_length:
+                original_predicates_length = len(predicates)
                 predicates = self._encode_predicates(predicates)
             else:
-                objects = []
+                original_predicates_length = 0
+                predicates = []
             if literals is not None and variable3_position > solution_length:
+                original_literals_length = len(literals)
                 literals = self._encode_literals(literals)
             else:
+                original_literals_length = 0
                 literals = []
 
             for potential_solution in potential_solution_list:
@@ -724,7 +732,20 @@ class SimpleTripleStore(object):
                 if variable3_position + 1 <= solution_length:
                     objects = [potential_solution[variable3_position]]
 
-                solutions = self._raw_find_triples(subjects,predicates,objects + literals)
+                execute_find = 1
+                if len(subjects) == 0 and original_subjects_length > 0:
+                    execute_find = 0
+                elif len(predicates) == 0 and original_predicates_length > 0:
+                    execute_find = 0
+                elif len(objects + literals) == 0 and original_objects_length + original_literals_length > 0:
+                    execute_find = 0
+
+
+                if execute_find:
+                    solutions = self._raw_find_triples(subjects,predicates,objects + literals)
+                else:
+                    solutions = []
+
                 if len(solutions):
                     for solution_address in solutions:
                         solution = self.te.triples[solution_address]
@@ -801,10 +822,9 @@ class SimpleTripleStore(object):
                 solution_decoded = self._decode_address_formatted(solution_encoded)
                 solutions.append(solution_decoded)
             solutions_list.append([solutions,solution_dict[solution_key]])
-
+        solutions_list.sort(key=lambda x: x[1],reverse=True)
         pprint.pprint(solutions_list)
         return solutions_list
-
 
 class TriplePatterns(object):
     def __init__(self,patterns):
