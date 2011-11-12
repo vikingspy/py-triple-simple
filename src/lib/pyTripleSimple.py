@@ -522,6 +522,52 @@ class SimpleTripleStore(object):
 
         return triples_set
 
+
+    def _encode_subjects(self,subjects):
+        subjects_encoded = []
+        if subjects is not None:
+            for subject in subjects:
+                subject = self._uri_check(subject)
+                subject_address = self._encode_uri(subject)
+                if subject_address:
+                    if self.te.subjects_index.has_key(subject_address):
+                        subjects_encoded.append(subject_address)
+        return subjects_encoded
+
+    def _encode_objects(self,objects):
+        objects_encoded = []
+        if objects is not None:
+                for object in objects:
+                    object = self._uri_check(object)
+                    object_address = self._encode_uri(object)
+                    if object_address:
+                        if self.te.objects_index.has_key(object_address):
+                            objects_encoded.append(object_address)
+        return objects_encoded
+
+    def _encode_predicates(self,predicates):
+        predicates_encoded = []
+        if predicates is not None:
+            for predicate in predicates:
+                predicate = self._uri_check(predicate)
+                predicate_address = self._encode_uri(predicate)
+                if predicate_address:
+                    if self.te.predicates_index.has_key(predicate_address):
+                        predicates_encoded.append(predicate_address)
+        return predicates_encoded
+
+
+    def _encode_literals(self,literals):
+        literals_encoded = []
+        if literals is not None:
+            for literal in literals:
+                literal_address = self._encode_literal(literal)
+                if literal_address:
+                    if self.te.objects_index.has_key(literal_address):
+                        literals_encoded.append(literal_address)
+        return literals_encoded
+
+
     def find_triples(self,subjects=None, predicates = None, objects = None, literals = None, return_type="raw"):
         """Find triples which match criteria: If nothing is given will return None.
             The input parameters for subjects, predicates, and objects can either be a string or an iterable"""
@@ -541,42 +587,10 @@ class SimpleTripleStore(object):
         if subjects is None and objects is None and predicates is None and literals is None:
             return None
 
-        subjects_encoded = []
-        objects_encoded = []
-        predicates_encoded = []
-        literals_encoded = []
-        
-        if subjects is not None:
-            for subject in subjects:
-                subject = self._uri_check(subject)
-                subject_address = self._encode_uri(subject)
-                if subject_address:
-                    if self.te.subjects_index.has_key(subject_address):
-                        subjects_encoded.append(subject_address)
-
-        if objects is not None:
-            for object in objects:
-                object = self._uri_check(object)
-                object_address = self._encode_uri(object)
-                if object_address:
-                    if self.te.objects_index.has_key(object_address):
-                        objects_encoded.append(object_address)
-
-        if predicates is not None:
-            for predicate in predicates:
-                predicate = self._uri_check(predicate)
-                predicate_address = self._encode_uri(predicate)
-                if predicate_address:
-                    if self.te.predicates_index.has_key(predicate_address):
-                        predicates_encoded.append(predicate_address)
-
-        if literals is not None:
-            for literal in literals:
-                literal_address = self._encode_literal(literal)
-                if literal_address:
-                    if self.te.objects_index.has_key(literal_address):
-                        literals_encoded.append(literal_address)
-
+        subjects_encoded = self._encode_subjects(subjects)
+        objects_encoded = self._encode_objects(objects)
+        predicates_encoded = self._encode_predicates(predicates)
+        literals_encoded = self._encode_literals(literals)
             
         if (len(subjects_encoded) + len(objects_encoded) + len(predicates_encoded) + len(literals_encoded))  == 0:
             return set([])
@@ -604,7 +618,7 @@ class SimpleTripleStore(object):
         elif return_type == "ntriples":
             pass
 
-    def simple_pattern_match(self, pattern, restrictions = [], output_variables = [], output_function = None):
+    def simple_pattern_match(self, patterns, restrictions = [], output_variables = [], output_function = None):
         """
         Patterns are simple Python structures which have a structure:
             [('a1','p1','a2'),('a2','p2','a1')]
@@ -637,17 +651,139 @@ class SimpleTripleStore(object):
         the standard list and application of function to the results.
         """
 
-    def _check_restrictions(self, restrictions):
-        return restrictions
+        patterns_obj = TriplePatterns(patterns)
+        restrictions_obj = TripleRestrictions(restrictions, patterns_obj.variables())
 
-    def _process_restrictions(self, restrictions):
-        pass
+        restrictions_applied = []
+        potential_solution_list = [[]] # seed potential solution list with empty list
+        solution_length = 0
+
+        i = 0
+        for pattern in patterns_obj.patterns():
+
+            variable1 = pattern[0]
+            variable2 = pattern[1]
+            variable3 = pattern[2]
+
+            variable1_position = patterns_obj.variables()[variable1]
+            variable2_position = patterns_obj.variables()[variable2]
+            variable3_position = patterns_obj.variables()[variable3]
+
+            extended_solution_length = max([variable1_position, variable2_position, variable3_position])
+
+            if variable1 in restrictions_obj.uri_restrictions():
+                subjects = restrictions_obj.uri_restrictions()[variable1]
+            else:
+                subjects = None
+            if variable2 in restrictions_obj.uri_restrictions():
+                predicates = restrictions_obj.uri_restrictions()[variable2]
+            else:
+                predicates = None
+            if variable3 in restrictions_obj.uri_restrictions():
+                objects = restrictions_obj.uri_restrictions()[variable3]
+            else:
+                objects = None
+            if variable3 in restrictions_obj.literal_restrictions():
+                literals = restrictions_obj.literal_restrictions()[variable3]
+            else:
+                literals = None
+
+            restrictions_to_apply = []
+
+            for variable in [variable1,variable2, variable3]:
+                if variable in restrictions_obj.variable_restrictions():
+                    for potential_restriction in restiction_obj.variable_restrictions()[variable]:
+                        if potential_restriction not in restrictions_to_apply and potential_restriction not in restrictions_applied:
+                            restrictions_to_apply.append(potential_restriction)
+                            restrictions_applied.append(potential_restriction)
+
+            updated_solution_list = []
+            if subjects is not None and variable1_position > solution_length:
+                subjects = self._encode_subjects(subjects)
+            else:
+                subjects = []
+            if objects is not None and variable3_position > solution_length:
+                objects = self._encode_objects(objects)
+            else:
+                objects = []
+            if predicates is not None and variable2_position > solution_length:
+                predicates = self._encode_predicates(predicates)
+            else:
+                objects = []
+            if literals is not None and variable3_position > solution_length:
+                literals = self._encode_literals(literals)
+            else:
+                literals = []
+
+            for potential_solution in potential_solution_list:
+                if variable1_position + 1 <= solution_length:
+                    subjects = [potential_solution[variable1_position]]
+                if variable2_position + 1<= solution_length:
+                    predicates = [potential_solution[variable2_position]]
+                if variable3_position + 1 <= solution_length:
+                    objects = [potential_solution[variable3_position]]
+
+                solutions = self._raw_find_triples(subjects,predicates,objects + literals)
+                if len(solutions):
+                    for solution_address in solutions:
+                        solution = self.te.triples[solution_address]
+                        new_solution = list(solution[:])
+                        if variable1_position > solution_length:
+                            new_solution.append(solution[0])
+                            solution_length += 1
+                        if variable2_position > solution_length:
+                            new_solution.append(solution[1])
+                            solution_length += 1
+                        if variable3_position > solution_length:
+                            new_solution.append(solution[2])
+                            solution_length += 1
+
+                        is_solution = 1 #explicitly a solution unless otherwise shown
+                        # handle internal patterns {(a,a,b),(a,b,a),(b,a,a)}
+                        if variable1 == variable2 == variable3:
+                            if solution[0] == solution[1] == solution[2]:
+                                pass
+                            else:
+                                is_solution = 0
+                        elif variable1 == variable2:
+                            if solution[0] != solution[1]:
+                                is_solution = 0
+                        elif variable1 == variable3:
+                            if solution[1] != solution[2]:
+                                is_solution = 0
+                        if variable2 == variable3:
+                            if solution[1] != solution[3]:
+                                is_solution = 0
+
+                        if is_solution:
+                            updated_solution_list.append(new_solution)
+
+                        for restriction in restrictions_to_apply:
+                            restriction_statement = restrictions_obj.restrictions()[restriction]
+                            restriction_variable1 = restriction_statement[0]
+                            restriction_variable2 = restriction_statement[2]
+                            restriction_rule = restriction_statement[1]
+                            restriction_variable1_position = patterns_obj.variables()[restriction_variable1]
+                            restriction_variable2_position = patterns_obj.variables()[restriction_variable2]
+
+                            if restriction_rule == '!=':
+                                if solution[restriction_variable1_position] == solution[restriction_variable2_position]:
+                                    is_solution = 0
+                            elif restriction_rule == '==':
+                                if solution[restriction_variable1_position] != solution[restriction_variable2_position]:
+                                    is_solution = 0
+
+            solution_length = extended_solution_length
+            potential_solution_list = updated_solution_list
+            i += 0
+        return potential_solution_list
+
 
 class TriplePatterns(object):
     def __init__(self,patterns):
         self.original_patterns = patterns
         self.checked_patterns = self.check_patterns()
-        self.variables = {}
+        self.variables_dict = {}
         self._process_variables()
         
     def check_patterns(self):
@@ -695,12 +831,17 @@ class TriplePatterns(object):
         variable_position = 0
         for pattern in self.checked_patterns:
             for variable in pattern:
-                if variable in self.variables:
+                if variable in self.variables_dict:
                     pass
                 else:
-                    self.variables[variable] = variable_position
+                    self.variables_dict[variable] = variable_position
                     variable_position += 1
+    def patterns(self):
+        return self.checked_patterns
 
+    def variables(self):
+        return self.variables_dict
+    
 class TripleRestrictions(object):
     def __init__(self, restrictions, variables = None):
         self.variables = variables
@@ -708,7 +849,12 @@ class TripleRestrictions(object):
         self.processed_restrictions = ""
         self._check_restrictions()
         self.restrictions_variables = {}
+        self.uris_restrictions = {}
+        self.literals_restrictions = {}
         self._process_restrictions()
+
+    def restrictions(self):
+        return self.original_restrictions
 
     def _check_restrictions(self):
         if type(self.original_restrictions) != type([]):
@@ -725,21 +871,45 @@ class TripleRestrictions(object):
         i = 0
         for restriction in self.original_restrictions:
             variable1 = restriction[0]
-            if variable1 not in self.restrictions_variables:
-                self.restrictions_variables[variable1] = [i]
-            else:
-                self.restrictions_variables[variable1].append(i)
             if restriction[1] in ["==", "!="]:
+                if variable1 not in self.restrictions_variables:
+                    self.restrictions_variables[variable1] = [i]
+                else:
+                    self.restrictions_variables[variable1].append(i)
                 variable2 = restriction[2]
                 if variable2 not in self.restrictions_variables:
                     self.restrictions_variables[variable2] = [i]
                 else:
                     self.restrictions_variables[variable2].append(i)
+            elif restriction[1] == "in":
+                literals = []
+                uris = []
+                for element in restriction[2]:
+                    if element[0] == "<" and element[-1] == ">":
+                        uris.append(element)
+                    else:
+                        literals.append(element)
+                if len(uris):
+                    if variable1 not in self.uris_restrictions:
+                        self.uris_restrictions[variable1] = uris
+                    else:
+                        self.uris_restrictions[variable1] += uris
+                if len(literals):
+                    if variable1 not in self.literals_restrictions:
+                        self.literals_restrictions[variable1] = literals
+                    else:
+                        self.literals_restrictions[variable1] += literals
             i += 1
-            print(self.restrictions_variables)
+            
+    def literal_restrictions(self):
+        return self.literals_restrictions
 
-    def encode_restrictions(self):
-        pass
+    def uri_restrictions(self):
+        return self.uris_restrictions
+
+    def variable_restrictions(self):
+        return self.restrictions_variables
+
     
 class IteratorTripleStore(object):
     def __init__(self,triple_engine):

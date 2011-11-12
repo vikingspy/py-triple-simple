@@ -59,6 +59,14 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         r10 = ts.find_triples("<http://example.org/resource14>", "<http://example.org/property>", objects="x")
         self.assertEquals(0,len(r10))
 
+    def test_simple_pattern_match(self):
+        ts = pyTripleSimple.SimpleTripleStore()
+        f = open("acme.nt","r")
+        ts.load_ntriples(f)
+
+        r1 = ts.simple_pattern_match([("a","p","b")],[("p","in",["<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"])],("b"))
+        self.assertEquals(2,len(r1))
+
 class  TestTriplePatterns(unittest.TestCase):
     def setup(self):
         pass
@@ -66,15 +74,15 @@ class  TestTriplePatterns(unittest.TestCase):
         pattern1 = [('a','b','c')]
         pattern_obj1 = pyTripleSimple.TriplePatterns(pattern1)
 
-        self.assertEquals(3,len(pattern_obj1.variables))
+        self.assertEquals(3,len(pattern_obj1.variables_dict))
 
         pattern2 = [('a','b','c','d','e')]
         pattern_obj2 = pyTripleSimple.TriplePatterns(pattern2)
         self.assertEquals(2,len(pattern_obj2.checked_patterns))
 
-        self.assertEquals(5,len(pattern_obj2.variables))
+        self.assertEquals(5,len(pattern_obj2.variables_dict))
 
-        print(pattern_obj2.variables)
+        print(pattern_obj2.variables_dict)
 
         pattern3 = [('a','b','c','d','e','f','g')]
         pattern_obj3 = pyTripleSimple.TriplePatterns(pattern3)
