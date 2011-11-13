@@ -70,6 +70,12 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         r2 = ts.simple_pattern_match([("a","p","b")],[("p","in",["<http://example.org/predicateDoesNotExist>"])],("b"))
         self.assertEquals(0,len(r2))
 
+        r3 = ts.simple_pattern_match([("a","p","b"),("a","r","ca"),("b","r","cb")],[("r","in",["<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"])],("p","ca","cb"))
+        self.assertEquals(5,len(r3))
+
+        r4 = ts.simple_pattern_match([("a","p","b"),("a","r","ca"),("b","r","cb")],[("p", "!=", "r"),("r","in",["<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"])],("p","ca","cb"))
+        self.assertEquals(2,len(r4))
+
 class  TestTriplePatterns(unittest.TestCase):
     def setup(self):
         pass
@@ -85,11 +91,16 @@ class  TestTriplePatterns(unittest.TestCase):
 
         self.assertEquals(5,len(pattern_obj2.variables_dict))
 
-        print(pattern_obj2.variables_dict)
-
         pattern3 = [('a','b','c','d','e','f','g')]
         pattern_obj3 = pyTripleSimple.TriplePatterns(pattern3)
         self.assertEquals(3,len(pattern_obj3.checked_patterns))
+
+        pattern4 = [("a","p","b"),("a","r","ca"),("b","r","cb")]
+        pattern_obj4 = pyTripleSimple.TriplePatterns(pattern4)
+
+        self.assertEquals(1, pattern_obj4.variables()["p"])
+        self.assertEquals(2, pattern_obj4.variables()["b"])
+        self.assertEquals(0, pattern_obj4.variables()["a"])
 
 class  TestTripleRestrictions(unittest.TestCase):
     def setup(self):
