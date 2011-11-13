@@ -48,13 +48,12 @@ def main():
     parser.add_option("-n", "--limit",
                       action="store",
                       dest="display_n",
-                      default="All",
+                      default="50",
                       help="")
 
 
     (options, args) = parser.parse_args()
 
-    pprint.pprint(options)
     #print args
 
     ts = pyTripleSimple.SimpleTripleStore() #pyTripleSimple.ShelveTripleEngine(ntriples_file_name)
@@ -119,7 +118,7 @@ def main():
             if display_n != "All":
                 pass
             else:
-                r[display_n:]
+                r[:display_n]
 
             pprint.pprint(r)
 
