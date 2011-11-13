@@ -518,7 +518,7 @@ class SimpleTripleStore(object):
                 triples_set = objects_set
 
         if n_subjects + n_predicates + n_objects == 0:
-            triples_set = set(range(len(self.te.triples)))
+            triples_set = set(self.te.triples.keys())
 
 
         return triples_set
@@ -619,9 +619,9 @@ class SimpleTripleStore(object):
         elif return_type == "ntriples":
             pass
 
-    def simple_pattern_match(self, patterns, restrictions = [], solution_variables = [], output_function = None):
+    def simple_pattern_match(self, patterns, restrictions = [], solution_variables = []):
         """
-        Patterns are simple Python structures which have a structure:
+        Patterns are simple Python structures which have the form:
             [('a1','p1','a2'),('a2','p2','a1')]
         this pattern would find all triples which have links in both direction.
 
@@ -646,16 +646,12 @@ class SimpleTripleStore(object):
         Restrictions are applied in the order that they are received and are applied only once.
 
         Output variables are specified in a list ['p1','p2']. By default answers will be aggregated and returned as list
-        descending occurrence [(('<http://example.org/property/1>','<http://example.org/property/2>'), 50)]
-
-        If output variables are set to null will only use a function. If output variables are not null will return
-        the standard list and application of function to the results.
+        descending occurrence [[['<http://example.org/property/1>','<http://example.org/property/2>'], 50)]]
         """
 
         patterns_obj = TriplePatterns(patterns)
         restrictions_obj = TripleRestrictions(restrictions, patterns_obj.variables())
 
-        restrictions_applied = []
         potential_solution_list = [[]] # seed potential solution list with empty list
         solution_length = 0
 
@@ -672,31 +668,43 @@ class SimpleTripleStore(object):
 
             extended_solution_length = max([variable1_position, variable2_position, variable3_position])
 
-            if variable1 in restrictions_obj.uri_restrictions():
-                subjects = restrictions_obj.uri_restrictions()[variable1]
+            #Include solutions that have the following URIs and literals
+            if variable1 in restrictions_obj.uri_inclusions():
+                subjects = restrictions_obj.uri_inclusions()[variable1]
             else:
                 subjects = None
-            if variable2 in restrictions_obj.uri_restrictions():
-                predicates = restrictions_obj.uri_restrictions()[variable2]
+            if variable2 in restrictions_obj.uri_inclusions():
+                predicates = restrictions_obj.uri_inclusions()[variable2]
             else:
                 predicates = None
-            if variable3 in restrictions_obj.uri_restrictions():
-                objects = restrictions_obj.uri_restrictions()[variable3]
+            if variable3 in restrictions_obj.uri_inclusions():
+                objects = restrictions_obj.uri_inclusions()[variable3]
             else:
                 objects = None
-            if variable3 in restrictions_obj.literal_restrictions():
-                literals = restrictions_obj.literal_restrictions()[variable3]
+            if variable3 in restrictions_obj.literal_inclusions():
+                literals = restrictions_obj.literal_inclusions()[variable3]
             else:
                 literals = None
 
             restrictions_to_apply = []
+            for variable in [variable1, variable2, variable3]:
+                if variable in restrictions_obj.variable_restrictions():
+                    for potential_restriction in restrictions_obj.variable_restrictions()[variable]:
+                        if potential_restriction not in restrictions_to_apply:
+                            restrictions_to_apply.append(potential_restriction)
+
+            exclusions_to_apply = {}
+            for variable in [variable1, variable2, variable3]:
+                if variable in restrictions_obj.uri_exclusions():
+                    exclusions_to_apply[variable] = [self._encode_uri(uri) for uri in restrictions_obj.uri_exclusions()[variable]]
 
             for variable in [variable1,variable2, variable3]:
-                if variable in restrictions_obj.variable_restrictions():
-                    for potential_restriction in restiction_obj.variable_restrictions()[variable]:
-                        if potential_restriction not in restrictions_to_apply and potential_restriction not in restrictions_applied:
-                            restrictions_to_apply.append(potential_restriction)
-                            restrictions_applied.append(potential_restriction)
+                if variable in restrictions_obj.literal_exclusions():
+                    exclusion_literals_encoded = [self._encode_literal(literal) for literal in restrictions_obj.uri_exclusions()[variable]]
+                    if variable in exclusions_to_apply:
+                        exclusions_to_apply[variable] += exclusion_literals_encoded
+                    else:
+                        exclusions_to_apply[variable] = exclusion_literals_encoded
 
             updated_solution_list = []
             if subjects is not None and variable1_position > solution_length:
@@ -725,14 +733,24 @@ class SimpleTripleStore(object):
                 literals = []
 
             for potential_solution in potential_solution_list:
-                if variable1_position + 1 <= solution_length:
-                    subjects = [potential_solution[variable1_position]]
-                if variable2_position + 1<= solution_length:
-                    predicates = [potential_solution[variable2_position]]
-                if variable3_position + 1 <= solution_length:
-                    objects = [potential_solution[variable3_position]]
-
                 execute_find = 1
+
+                if variable1_position + 1 <= solution_length:
+                    if self.te.subjects_index.has_key(potential_solution[variable1_position]):
+                        subjects = [potential_solution[variable1_position]]
+                    else:
+                        execute_find = 0
+                if variable2_position + 1 <= solution_length:
+                    if self.te.predicates_index.has_key(potential_solution[variable2_position]):
+                        predicates = [potential_solution[variable2_position]]
+                    else:
+                        execute_find = 0
+                if variable3_position + 1 <= solution_length:
+                    if self.te.objects_index.has_key(potential_solution[variable3_position]):
+                        objects = [potential_solution[variable3_position]]
+                    else:
+                        execute_find = 0
+
                 if len(subjects) == 0 and original_subjects_length > 0:
                     execute_find = 0
                 elif len(predicates) == 0 and original_predicates_length > 0:
@@ -740,25 +758,24 @@ class SimpleTripleStore(object):
                 elif len(objects + literals) == 0 and original_objects_length + original_literals_length > 0:
                     execute_find = 0
 
-
                 if execute_find:
                     solutions = self._raw_find_triples(subjects,predicates,objects + literals)
                 else:
                     solutions = []
-
+                
                 if len(solutions):
                     for solution_address in solutions:
+                        local_solution_length = solution_length
                         solution = self.te.triples[solution_address]
-                        new_solution = list(solution[:])
-                        if variable1_position > solution_length:
+                        new_solution = list(potential_solution[:])
+                        if variable1_position + 1 > local_solution_length:
                             new_solution.append(solution[0])
-                            solution_length += 1
-                        if variable2_position > solution_length:
+                            local_solution_length += 1
+                        if variable2_position + 1 > local_solution_length:
                             new_solution.append(solution[1])
-                            solution_length += 1
-                        if variable3_position > solution_length:
+                            local_solution_length += 1
+                        if variable3_position + 1 > local_solution_length:
                             new_solution.append(solution[2])
-                            solution_length += 1
 
                         is_solution = 1 #explicitly a solution unless otherwise shown
                         # handle internal patterns {(a,a,b),(a,b,a),(b,a,a)}
@@ -777,9 +794,6 @@ class SimpleTripleStore(object):
                             if solution[1] != solution[3]:
                                 is_solution = 0
 
-                        if is_solution:
-                            updated_solution_list.append(new_solution)
-
                         for restriction in restrictions_to_apply:
                             restriction_statement = restrictions_obj.restrictions()[restriction]
                             restriction_variable1 = restriction_statement[0]
@@ -787,14 +801,25 @@ class SimpleTripleStore(object):
                             restriction_rule = restriction_statement[1]
                             restriction_variable1_position = patterns_obj.variables()[restriction_variable1]
                             restriction_variable2_position = patterns_obj.variables()[restriction_variable2]
+                            if max([restriction_variable1_position,restriction_variable2_position]) < len(new_solution):
 
-                            if restriction_rule == '!=':
-                                if solution[restriction_variable1_position] == solution[restriction_variable2_position]:
-                                    is_solution = 0
-                            elif restriction_rule == '==':
-                                if solution[restriction_variable1_position] != solution[restriction_variable2_position]:
-                                    is_solution = 0
+                                if restriction_rule == '!=':
+                                    if new_solution[restriction_variable1_position] == new_solution[restriction_variable2_position]:
+                                        is_solution = 0
+                                elif restriction_rule == '==':
+                                    if new_solution[restriction_variable1_position] != new_solution[restriction_variable2_position]:
+                                        is_solution = 0
 
+                        for variable in [variable1, variable2, variable3]:
+                            if variable in exclusions_to_apply:
+                                exclusions = exclusion_to_apply[variable]
+                                variable_position = patterns_obj.variables()[variable]
+                                for exclusion in exclusions:
+                                    if exclusion == new_solution[variable_position]:
+                                        is_solution = 0
+
+                        if is_solution:
+                            updated_solution_list.append(new_solution)
             solution_length = extended_solution_length
             potential_solution_list = updated_solution_list
             i += 0
@@ -807,6 +832,7 @@ class SimpleTripleStore(object):
 
         for solution in potential_solution_list:
             solution_key_list = []
+
             for position in solution_variables_position:
                 solution_key_list.append(solution[position])
             solution_key = tuple(solution_key_list)
@@ -823,7 +849,7 @@ class SimpleTripleStore(object):
                 solutions.append(solution_decoded)
             solutions_list.append([solutions,solution_dict[solution_key]])
         solutions_list.sort(key=lambda x: x[1],reverse=True)
-        pprint.pprint(solutions_list)
+        
         return solutions_list
 
 class TriplePatterns(object):
@@ -896,8 +922,10 @@ class TripleRestrictions(object):
         self.processed_restrictions = ""
         self._check_restrictions()
         self.restrictions_variables = {}
-        self.uris_restrictions = {}
-        self.literals_restrictions = {}
+        self.uris_inclusions = {}
+        self.literals_inclusions = {}
+        self.uris_exclusions = {}
+        self.literals_exclusions = {}
         self._process_restrictions()
 
     def restrictions(self):
@@ -937,27 +965,50 @@ class TripleRestrictions(object):
                     else:
                         literals.append(element)
                 if len(uris):
-                    if variable1 not in self.uris_restrictions:
-                        self.uris_restrictions[variable1] = uris
+                    if variable1 not in self.uris_inclusions:
+                        self.uris_inclusions[variable1] = uris
                     else:
-                        self.uris_restrictions[variable1] += uris
+                        self.uris_inclusions[variable1] += uris
                 if len(literals):
-                    if variable1 not in self.literals_restrictions:
-                        self.literals_restrictions[variable1] = literals
+                    if variable1 not in self.literals_inclusions:
+                        self.literals_inclusions[variable1] = literals
                     else:
-                        self.literals_restrictions[variable1] += literals
+                        self.literals_inclusions[variable1] += literals
+            elif restriction[1] == "not in":
+                literals = []
+                uris = []
+                for element in restriction[2]:
+                    if element[0] == "<" and element[-1] == ">":
+                        uris.append(element)
+                    else:
+                        literals.append(element)
+                if len(uris):
+                    if variable1 not in self.uris_inclusions:
+                        self.uris_inclusions[variable1] = uris
+                    else:
+                        self.uris_inclusions[variable1] += uris
+                if len(literals):
+                    if variable1 not in self.literals_inclusions:
+                        self.literals_exclusions[variable1] = literals
+                    else:
+                        self.literals_exclusions[variable1] += literals
             i += 1
             
-    def literal_restrictions(self):
-        return self.literals_restrictions
+    def literal_inclusions(self):
+        return self.literals_inclusions
 
-    def uri_restrictions(self):
-        return self.uris_restrictions
+    def uri_inclusions(self):
+        return self.uris_inclusions
 
     def variable_restrictions(self):
         return self.restrictions_variables
 
-    
+    def uri_exclusions(self):
+        return self.uris_exclusions
+
+    def literal_exclusions(self):
+        return self.literals_exclusions
+
 class IteratorTripleStore(object):
     def __init__(self,triple_engine):
         self.triple_engine = triple_engine
