@@ -40,9 +40,6 @@ class FreeTextExpander(object):
             words_phrases.append(word_phrase)
         return words_phrases
 
-        
-
-
 class FreeTextSimpleTripleStore(object):
     """Generates a free text index of a SimpleTripleStore"""
     def __init__(self, triple_simple_store, predicates_to_index = [rdfs_label]):

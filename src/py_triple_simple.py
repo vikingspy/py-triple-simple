@@ -21,6 +21,7 @@ def main():
                       dest="file_name",
                       default=False,
                       help="ntriples file to read in")
+    
     parser.add_option("-c", "--command",
                       action="store",
                       dest="command",
@@ -31,25 +32,25 @@ def main():
                       action="store",
                       dest="query",
                       default=False,
-                      help="")
+                      help="Specify the pattern to match the solution for")
 
     parser.add_option("-r", "--restrictions",
                       action="store",
                       dest="restrictions",
                       default=None,
-                      help="")
+                      help="Specify restrictions on the solution")
 
     parser.add_option("-v", "--variables",
                       action="store",
                       dest="variables",
                       default=False,
-                      help="")
+                      help="Specify the variables for output")
 
     parser.add_option("-n", "--limit",
                       action="store",
                       dest="display_n",
                       default="50",
-                      help="")
+                      help="Limit the number of results")
 
 
     (options, args) = parser.parse_args()
@@ -115,10 +116,10 @@ def main():
 
             r = ts.simple_pattern_match(query, restrictions, solution_variables)
 
-            if display_n != "All":
+            if display_n == "All":
                 pass
             else:
-                r[:display_n]
+                r = r[:display_n]
 
             pprint.pprint(r)
 
