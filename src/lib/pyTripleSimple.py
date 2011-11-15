@@ -918,7 +918,7 @@ class SimpleTripleStore(object):
 
                         for variable in [variable1, variable2, variable3]:
                             if variable in exclusions_to_apply:
-                                exclusions = exclusion_to_apply[variable]
+                                exclusions = exclusions_to_apply[variable]
                                 variable_position = patterns_obj.variables()[variable]
                                 for exclusion in exclusions:
                                     if exclusion == new_solution[variable_position]:
