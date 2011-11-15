@@ -72,15 +72,14 @@ def main():
         except IOError:
             raise
 
-
-        print('Loading "%s"' % os.path.abspath(file_name))
-        start_time = time.clock()
-        ts.load_ntriples(f)
-        end_time = time.clock()
-        print("Finished loading ntriples file")
-
-
         if options.command == "statistics":
+
+            print('Loading "%s"' % os.path.abspath(file_name))
+            start_time = time.clock()
+            ts.load_ntriples(f)
+            end_time = time.clock()
+            print("Finished loading ntriples file")
+
             number_of_triples = ts.n_triples()
 
             print("Number of triples %s loaded in %s seconds (%s triples/second)" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
@@ -104,6 +103,7 @@ def main():
             pprint.pprint(ts.top_predicates(None))
 
         elif options.command == "query":
+            ts.load_ntriples(f)
             query = eval(options.query)
             if options.restrictions:
                 restrictions = eval(options.restrictions)

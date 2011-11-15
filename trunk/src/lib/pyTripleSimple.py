@@ -806,7 +806,7 @@ class SimpleTripleStore(object):
 
             for variable in [variable1,variable2, variable3]:
                 if variable in restrictions_obj.literal_exclusions():
-                    exclusion_literals_encoded = [self._encode_literal(literal) for literal in restrictions_obj.uri_exclusions()[variable]]
+                    exclusion_literals_encoded = [self._encode_literal(literal) for literal in restrictions_obj.literal_exclusions()[variable]]
                     if variable in exclusions_to_apply:
                         exclusions_to_apply[variable] += exclusion_literals_encoded
                     else:
@@ -953,7 +953,7 @@ class SimpleTripleStore(object):
             for solution_encoded in solution_key:
                 solution_decoded = self._decode_address_formatted(solution_encoded)
                 solutions.append(solution_decoded)
-            solutions_list.append([solutions,solution_dict[solution_key]])
+            solutions_list.append([tuple(solutions),solution_dict[solution_key]])
         solutions_list.sort(key=lambda x: x[1],reverse=True)
         
         return solutions_list
