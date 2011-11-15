@@ -492,35 +492,141 @@ class SimpleTripleStore(object):
         n_subjects = len(subjects_address)
         n_objects = len(objects_address)
         n_predicates = len(predicates_address)
-
-        if n_subjects:
-            subjects_set = set()
-            for subject_address in subjects_address:
-                subjects_set = subjects_set.union(set(self.te.subjects_index[subject_address]))
-            triples_set = subjects_set
-
-        if n_predicates:
-            predicates_set = set()
-            for predicate_address in predicates_address:
-                predicates_set = predicates_set.union(set(self.te.predicates_index[predicate_address]))
-            if n_subjects:
-                triples_set = triples_set.intersection(predicates_set)
-            else:
-                triples_set = predicates_set
-
-        if n_objects:
-            objects_set = set()
-            for object_address in objects_address:
-                objects_set = objects_set.union(set(self.te.objects_index[object_address]))
-            if n_predicates + n_subjects > 0:
-                triples_set = triples_set.intersection(objects_set)
-            else:
-                triples_set = objects_set
+        subject_address = None
+        predicate_address = None
+        object_address = None
+        triples_set = set([])
 
         if n_subjects + n_predicates + n_objects == 0:
             triples_set = set(self.te.triples.keys())
+        elif (n_subjects == 1 or n_subjects == 0) and (n_predicates == 1 or n_predicates == 0) and (n_objects == 1 or n_objects == 0):
+            if n_subjects:
+                if subjects_address[0] in self.te.subjects_index:
+                    subject_address = subjects_address[0]
+                    n_subjects_triples = len(self.te.subjects_index[subject_address])
+                else:
+                    n_subjects_triples = 0
+            else:
+                n_subjects_triples = None
 
+            if n_predicates:
+                if predicates_address[0] in self.te.predicates_index:
+                    predicate_address = predicates_address[0]
+                    n_predicates_triples = len(self.te.predicates_index[predicate_address])
+                else:
+                    n_predicates_triples = 0
+            else:
+                n_predicates_triples = None
 
+            if n_objects:
+                if objects_address[0] in self.te.objects_index:
+                    object_address = objects_address[0]
+                    n_objects_triples = len(self.te.objects_index[object_address])
+                else:
+                    n_objects_triples = 0
+            else:
+                n_objects_triples = None
+
+            if n_subjects_triples == 0 or n_predicates_triples == 0 or n_objects_triples == 0:
+                triples_set = set([])
+            else: # We know there are solutions
+                triples = []
+                if n_subjects_triples is not None and n_predicates_triples is not None and n_objects_triples is not None: #(spo)
+                    min_n_triples = min(n_subjects_triples,n_predicates_triples,n_objects_triples)
+                    if n_subjects_triples == min_n_triples:
+                        triples_to_evaluate = self.te.subjects_index[subject_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evaluate[1] == predicate_address:
+                                if triple_to_evaluate[2] == object_address:
+                                    triples.append(triples_address_to_evaluate)
+                    elif n_predicates_triples == min_n_triples:
+                        triples_to_evaluate = self.te.predicates_index[predicate_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evalutae[0] == subject_address:
+                                if triple_to_evaluate[2] == object_address:
+                                    triples.append(triples_address_to_evaluate)
+                    elif n_objects_triples == min_n_triples:
+                        triples_to_evaluate = self.te.predicates_index[objects_address[0]]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evalute[0] == subject_address:
+                                if triple_to_evaluate[1] == predicate_address:
+                                    triples.append(triples_address_to_evaluate)
+                elif n_subjects_triples is not None and n_predicates_triples is not None and n_objects_triples is None: #(sp.)
+                    if n_subjects_triples <= n_predicates_triples:
+                        triples_to_evaluate = self.te.subjects_index[subject_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evaluate[1] == predicate_address:
+                                triples.append(triples_address_to_evaluate)
+                    else:
+                        triples_to_evaluate = self.te.predicates_index[predicate_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evaluate[0] == subject_address:
+                                triples.append(triples_address_to_evaluate)
+                elif n_subjects_triples is not None and n_predicates_triples is None and n_objects_triples is not None: #(s.o)
+                    if n_subjects_triples <= n_objects_triples:
+                        triples_to_evaluate = self.te.subjects_index[subject_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evaluate[2] == object_address:
+                                triples.append(triples_address_to_evaluate)
+                    else:
+                        triples_to_evaluate = self.te.objects_index[object_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evaluate[0] == subject_address:
+                                triples.append(triples_address_to_evaluate)
+                                
+                elif n_subjects_triples is None and n_predicates_triples is not None and n_objects_triples is not None: #(.po)
+                    if n_predicates_triples <= n_objects_triples:
+                        triples_to_evaluate = self.te.predicates_index[prediaate_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evaluate[2] == object_address:
+                                triples.append(triples_address_to_evaluate)
+                    else:
+                        triples_to_evaluate = self.te.object_index[object_address]
+                        for triples_address_to_evaluate in triples_to_evaluate:
+                            triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
+                            if triple_to_evaluate[1] == predicate_address:
+                                triples.append(triples_address_to_evaluate)
+                                
+                elif n_subjects_triples is not None and n_predicates_triples is None and n_objects_triples is None: #(s..)
+                    triples = self.te.subjects_index[subject_address]
+                elif n_subjects_triples is None and n_predicates_triples is not None and n_objects_triples is None: #(.p.)
+                    triples = self.te.predicates_index[predicate_address]
+                elif n_subjects_triples is None and n_predicates_triples is None and n_objects_triples is not None: #(..p)
+                    triples = self.te.objects_index[object_address]
+            triples_set = set(triples)
+        else: # If you pass in a list of subjects uses a pure set based approach
+            if n_subjects:
+                subjects_set = set()
+                for subject_address in subjects_address:
+                    subjects_set = subjects_set.union(set(self.te.subjects_index[subject_address]))
+                triples_set = subjects_set
+
+            if n_predicates:
+                predicates_set = set()
+                for predicate_address in predicates_address:
+                    predicates_set = predicates_set.union(set(self.te.predicates_index[predicate_address]))
+                if n_subjects:
+                    triples_set = triples_set.intersection(predicates_set)
+                else:
+                    triples_set = predicates_set
+
+            if n_objects:
+                objects_set = set()
+                for object_address in objects_address:
+                    objects_set = objects_set.union(set(self.te.objects_index[object_address]))
+                if n_predicates + n_subjects > 0:
+                    triples_set = triples_set.intersection(objects_set)
+                else:
+                    triples_set = objects_set
+                    
         return triples_set
 
 
