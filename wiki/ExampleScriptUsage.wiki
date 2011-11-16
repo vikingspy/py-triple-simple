@@ -6,7 +6,7 @@ The program/script is "py_triple_simple.py" provides a command line interface in
 
 = Details =
 
-Examples are show using an ABox dump of Vivo. An automated dump of VIVO can be generated using [sbu-mi-vivo-tools]
+Examples are show using an ABox dump of Vivo. An automated dump of VIVO can be generated using [http://code.google.com/p/sbu-mi-vivo-tools/ sbu-mi-vivo-tools]
 
 {{{
 pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
@@ -27,4 +27,28 @@ will return to standard output results structured as
   1]]
 }}}
 
-An example of co-occurrence analysis is:
+An example of a simple co-occurrence analysis is:
+
+{{{
+pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_01_rdf-schema%23label.nt \
+-c query -q "[('a','p','b'),('a','p','c')]"  \
+-v "['b','c']" \
+-r "[('p', 'in', ['<http://vivoweb.org/ontology/core#freetextKeyword>']),('b','!=','c'),('b','not in', ['a','the','of','on','in','and','to','with','for','by','The','A','an']),('c','not in', ['a','the','of','on','in','and','to','with','for','by','The','A','an'])]"\
+ -n 10
+
+}}}
+
+Produces output:
+
+{{{
+[[('"Faculty"', '"University"'), 449],
+ [('"University"', '"Faculty"'), 449],
+ [('"sclerosis"', '"multiple"'), 343],
+ [('"multiple"', '"sclerosis"'), 343],
+ [('"University"', '"Medical"'), 308],
+ [('"Medical"', '"University"'), 308],
+ [('"Downstate"', '"Medical"'), 302],
+ [('"Medical"', '"Downstate"'), 302],
+ [('"Downstate"', '"University"'), 301],
+ [('"University"', '"Downstate"'), 301]]
+}}}
