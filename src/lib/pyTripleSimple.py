@@ -816,15 +816,10 @@ class SimpleTripleStore(object):
                     for literal in restrictions_obj.literal_exclusions()[variable]:
                         literal_address = self._encode_literal(literal)
                         if literal_address:
-                            if variable not in exclusion_apply:
+                            if variable not in exclusions_to_apply:
                                 exclusions_to_apply[variable] = [literal_address]
                             else:
                                 exclusions_to_apply[variable].append(literal_address)
-
-                    if variable in exclusions_to_apply:
-                        exclusions_to_apply[variable] += exclusion_literals_encoded
-                    else:
-                        exclusions_to_apply[variable] = exclusion_literals_encoded
 
             updated_solution_list = []
             if subjects is not None and variable1_position > solution_length:
