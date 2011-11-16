@@ -3,7 +3,7 @@
 = Introduction =
 
 The program/script is "py_triple_simple.py" provides a command line interface into the pyTripleSimple.py module.  
-Examples are shown using an ABox dump of a [http://vivoweb.org/ VIVO site]. An automated dump of VIVO can be generated using [http://code.google.com/p/sbu-mi-vivo-tools/ sbu-mi-vivo-tools]
+Examples are shown using an ABox dump of a [http://vivoweb.org/ VIVO site] and a free-text index built using the "generate_free_text_triples.py". An automated dump of VIVO can be generated using the [http://code.google.com/p/sbu-mi-vivo-tools/ sbu-mi-vivo-tools] or as a site administer.
 
 = Ntriple Statistics =
 
