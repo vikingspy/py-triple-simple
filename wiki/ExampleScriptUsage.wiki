@@ -34,8 +34,7 @@ pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_
 -c query -q "[('a','p','b'),('a','p','c')]"  \
 -v "['b','c']" \
 -r "[('p', 'in', ['<http://vivoweb.org/ontology/core#freetextKeyword>']),('b','!=','c'),('b','not in', ['a','the','of','on','in','and','to','with','for','by','The','A','an']),('c','not in', ['a','the','of','on','in','and','to','with','for','by','The','A','an'])]"\
- -n 10
-
+-n 10
 }}}
 
 Produces output:
