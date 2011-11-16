@@ -1,0 +1,15 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+The program/script is "py_triple_simple.py" provides a command line interface into the pyTripleSimple.py module.
+
+= Details =
+
+Examples are show using an Abox dump of Vivo.
+
+{{{
+pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
+-q "[('a','p1','b'),('a','p2','c')]"  \
+-r "[('p1','in',['<http://xmlns.com/foaf/0.1/lastName>']),('p2','in',['<http://xmlns.com/foaf/0.1/firstName>'])]" -v "['a','b','c']" -c query -n All
+}}}
