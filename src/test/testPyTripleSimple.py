@@ -92,7 +92,6 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         self.assertEquals(57 - 2,len(r9))
 
 
-
 class  TestTriplePatterns(unittest.TestCase):
     def setup(self):
         pass
