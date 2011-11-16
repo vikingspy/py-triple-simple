@@ -4,7 +4,44 @@
 
 The program/script is "py_triple_simple.py" provides a command line interface into the pyTripleSimple.py module.
 
-= Details =
+= Ntriple Statistics =
+
+{{{
+pypy-c py_triple_simple.py -c statistics -f reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_01_rdf-schema%23label.nt -n 5
+}}}
+
+Produces output:
+
+{{{
+Loading "/home/janos/workspace/sbu-mi-vivo-tools/reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_01_rdf-schema%23label.nt"
+Finished loading ntriples file
+Number of triples 221149 loaded in 2.788174 seconds (79316.7858247 triples/second)
+Number of distinct lexical symbols: 48660
+Number of distinct subjects: 21575
+Number of distinct predicates: 1
+Number of distinct objects including literals: 27084
+Number of literals: 27084
+Fraction of objects that are literals: 1.0
+
+Top subjects are:
+[('<http://reach.suny.edu/individual/a17010819>', 66),
+ ('<http://reach.suny.edu/individual/a18760147>', 50),
+ ('<http://reach.suny.edu/individual/a21297512>', 49),
+ ('<http://reach.suny.edu/individual/a15862441>', 49),
+ ('<http://reach.suny.edu/individual/a15766815>', 45)]
+
+Top objects are:
+[('"of"', 12778),
+ ('"in"', 9127),
+ ('"and"', 8455),
+ ('"the"', 5111),
+ ('"with"', 3150)]
+
+Top predicates are:
+[('<http://vivoweb.org/ontology/core#freetextKeyword>', 221149)]
+}}}
+
+= Pattern matching/querying =
 
 Examples are show using an ABox dump of Vivo. An automated dump of VIVO can be generated using [http://code.google.com/p/sbu-mi-vivo-tools/ sbu-mi-vivo-tools]
 
@@ -15,7 +52,7 @@ pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
 -v "['a','b','c']" -c query -n All
 }}}
 
-will return to standard output results structured as
+Produces output:
 {{{
 [[('<http://example.com/individual/John_Stephen>',
    '"John"',
