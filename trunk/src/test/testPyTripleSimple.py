@@ -85,6 +85,12 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         r7 = ts.simple_pattern_match([('a','p','b')], [('p','not in',['<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>'])],['a','p','b'])
         self.assertEquals(57 - 14,len(r7))
 
+        r8 = ts.simple_pattern_match([('a','p','b')], [('b','in',['Hollywood'])],['a','p','b'])
+        self.assertEquals(2,len(r8))
+
+        r9 = ts.simple_pattern_match([('a','p','b')], [('b','not in',['Hollywood'])],['a','p','b'])
+        self.assertEquals(57 - 2,len(r9))
+
 
 
 class  TestTriplePatterns(unittest.TestCase):
