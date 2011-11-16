@@ -43,14 +43,14 @@ Top predicates are:
 [('<http://vivoweb.org/ontology/core#freetextKeyword>', 221149)]
 }}}
 
-The script can be run with standard Python.
-
+The script can be run with standard Python but PyPy is 4.3 times faster:
 {{{
+python -V
+Python 2.7.2+
 python ~/workspace/py-triple-simple/src/py_triple_simple.py -c statistics -f reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_01_rdf-schema%23label.nt -n 5
 Loading "/home/janos/workspace/sbu-mi-vivo-tools/reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_01_rdf-schema%23label.nt"
 Finished loading ntriples file
 Number of triples 221149 loaded in 12.12 seconds (18246.6171617 triples/second)
-
 }}}
 
 = Pattern matching/querying =
