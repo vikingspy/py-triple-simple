@@ -6,7 +6,7 @@ The program/script is "py_triple_simple.py" provides a command line interface in
 
 = Details =
 
-Examples are show using an Abox dump of Vivo.
+Examples are show using an ABox dump of Vivo. An automated dump of VIVO can be generated using [sbu-mi-vivo-tools]
 
 {{{
 pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
@@ -24,6 +24,7 @@ will return to standard output results structured as
  [('<http://example.com/individual/Lily_Catherine>',
    '"Lily"',
    '"Catherine"'),
-  1],
-
+  1]]
 }}}
+
+An example of co-occurrence analysis is:
