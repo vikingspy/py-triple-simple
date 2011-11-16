@@ -14,3 +14,16 @@ pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
 -r "[('p1','in',['<http://xmlns.com/foaf/0.1/lastName>']),('p2','in',['<http://xmlns.com/foaf/0.1/firstName>'])]" \
 -v "['a','b','c']" -c query -n All
 }}}
+
+will return to standard output results structured as
+{{{
+[[('<http://example.com/individual/John_Stephen>',
+   '"John"',
+   '"Stephen"'),
+  1],
+ [('<http://example.com/individual/Lily_Catherine>',
+   '"Lily"',
+   '"Catherine"'),
+  1],
+
+}}}
