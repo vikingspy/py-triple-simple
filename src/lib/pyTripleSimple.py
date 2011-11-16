@@ -802,11 +802,25 @@ class SimpleTripleStore(object):
             exclusions_to_apply = {}
             for variable in [variable1, variable2, variable3]:
                 if variable in restrictions_obj.uri_exclusions():
-                    exclusions_to_apply[variable] = [self._encode_uri(uri) for uri in restrictions_obj.uri_exclusions()[variable]]
 
+                    for uri in restrictions_obj.uri_exclusions()[variable]:
+                        uri = self._uri_check(uri)
+                        uri_address = self._encode_uri(uri)
+                        if uri_address:
+                            if variable not in exclusions_to_apply:
+                                exclusions_to_apply[variable] = [uri_address]
+                            else:
+                                exclusions_to_apply[variable].append(uri_address)
             for variable in [variable1,variable2, variable3]:
                 if variable in restrictions_obj.literal_exclusions():
-                    exclusion_literals_encoded = [self._encode_literal(literal) for literal in restrictions_obj.literal_exclusions()[variable]]
+                    for literal in restrictions_obj.literal_exclusions()[variable]:
+                        literal_address = self._encode_literal(literal)
+                        if literal_address:
+                            if variable not in exclusion_apply:
+                                exclusions_to_apply[variable] = [literal_address]
+                            else:
+                                exclusions_to_apply[variable].append(literal_address)
+
                     if variable in exclusions_to_apply:
                         exclusions_to_apply[variable] += exclusion_literals_encoded
                     else:
@@ -1090,9 +1104,9 @@ class TripleRestrictions(object):
                         literals.append(element)
                 if len(uris):
                     if variable1 not in self.uris_inclusions:
-                        self.uris_inclusions[variable1] = uris
+                        self.uris_exclusions[variable1] = uris
                     else:
-                        self.uris_inclusions[variable1] += uris
+                        self.uris_exclusions[variable1] += uris
                 if len(literals):
                     if variable1 not in self.literals_inclusions:
                         self.literals_exclusions[variable1] = literals
