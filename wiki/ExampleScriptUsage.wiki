@@ -1,10 +1,12 @@
-#summary One-sentence summary of this page.
+#summary Real world examples of using the "py_triple_simple.py" script
 
 = Introduction =
 
 The program/script is "py_triple_simple.py" provides a command line interface into the pyTripleSimple.py module.
 
 = Ntriple Statistics =
+
+The simplest usage of the script is to generate elementary statistics on a ntriples file.
 
 {{{
 pypy-c py_triple_simple.py -c statistics -f reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_01_rdf-schema%23label.nt -n 5
