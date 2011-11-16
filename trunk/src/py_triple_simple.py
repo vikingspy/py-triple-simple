@@ -26,7 +26,7 @@ def main():
                       action="store",
                       dest="command",
                       default="statistics",
-                      help="")
+                      help="Supported commands are: 'statistics' and 'query'")
 
     parser.add_option("-q", "--query",
                       action="store",
