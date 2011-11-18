@@ -100,3 +100,29 @@ Produces output:
  [('"Downstate"', '"University"'), 301],
  [('"University"', '"Downstate"'), 301]]
 }}}
+
+= Output formats =
+
+The script supports a diagnostic output, delimited output (tab delimited), and JSON based output formats. The script output can be written to console or to text file.
+
+Here I am querying to get all PubMed Ids back from a VIVO site
+{{{
+janos@janosworkstation:~/workspace/sbu-mi-vivo-tools$ pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt -c query \
+-q "[('a','p','c')]" \n
+-r "[('p','in',['<http://purl.org/ontology/bibo/pmid>'])]" \
+-v "['c']" -o delimited -n 10
+}}}
+Produces output
+{{{
+c	count
+"17258161"	2
+"19716077"	2
+"15597812"	2
+"11041443"	1
+"8203638"	1
+"21248674"	1
+"15246464"	1
+"18254103"	1
+"16513665"	1
+"5440675"	1
+}}}
