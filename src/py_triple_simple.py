@@ -52,10 +52,32 @@ def main():
                       default="50",
                       help="Limit the number of results")
 
+    parser.add_option("-o","--output-format",
+                      action ="store",
+                      dest="output_format",
+                      default="stdout",
+                      help="Query output format: stdout, json, delimited")
+
+    parser.add_option("-w","--output-file",
+                          action ="store",
+                          dest="output_file_name",
+                          default=0,
+                          help="Send results to named file")
+
+    parser.add_option("--header",
+                      action = "store",
+                      dest = "header",
+                      default = 1,
+                      help = "For table output add a header row")
+
+
+    parser.add_option("--delimiter",
+                      action = "store",
+                      dest = "delimiter",
+                      default = "\t",
+                      help = "Delimiter to use in table output")
 
     (options, args) = parser.parse_args()
-
-    #print args
 
     ts = pyTripleSimple.SimpleTripleStore() #pyTripleSimple.ShelveTripleEngine(ntriples_file_name)
 
@@ -114,17 +136,54 @@ def main():
             else:
                 solution_variables = None
 
-            r = ts.simple_pattern_match(query, restrictions, solution_variables)
+            result_set = ts.simple_pattern_match(query, restrictions, solution_variables)
 
             if display_n == "All":
                 pass
             else:
-                r = r[:display_n]
+                result_set = result_set[:display_n]
 
-            pprint.pprint(r)
+            if options.output_format == "stdout":
+                pprint.pprint(result_set)
+                print("Query returned %s results" % len(result_set))
+            elif options.output_format == "json":
+                import json
+                if options.output_file_name:
+                    try:
+                        fo = open(options.output_file_name,'w')
+                    except IOError:
+                        raise
+                    json.dump(result_set,fo)
+                    fo.close()
+                else:
+                    print(json.dumps(result_set))
+            elif options.output_format == "delimited":
+                header = options.header
+                delimiter = options.delimiter
+                #strip_uris = options.strip_uris
+                string_tab = ""
+                if header:
+                    if len(result_set):
+                        for solution_variable in solution_variables:
+                            string_tab += "%s%s" % (solution_variable,delimiter)
+                        string_tab += "count\n"
+                else:
+                    pass
 
+                for result in result_set:
+                    for solution in result[0]:
+                        string_tab += "%s%s" % (solution,delimiter)
+                    string_tab += "%s\n" % result[1]
 
-
+                if options.output_file_name:
+                    try:
+                        fo = open(options.output_file_name,'w')
+                    except IOError:
+                        raise
+                    fo.write(string_tab[:-1])
+                    fo.close()
+                else:
+                    print(string_tab[:-1])
 
 if __name__ == "__main__":
     main()

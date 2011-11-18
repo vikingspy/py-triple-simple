@@ -126,5 +126,13 @@ class  TestTripleRestrictions(unittest.TestCase):
         restrictions1_obj = pyTripleSimple.TripleRestrictions(restrictions1)
 
 
+        restrictions2 = [("a","!=","b"),("a", "in", ["<http://example.org/1>","<http://example.org/2>"])]
+        restrictions2_obj = pyTripleSimple.TripleRestrictions(restrictions2)
+
+        restrictions3 = [("a","!=","b"),("a", "in", [""])]
+        restrictions3_obj = pyTripleSimple.TripleRestrictions(restrictions3)
+
+
+
 if __name__ == '__main__':
     unittest.main()
