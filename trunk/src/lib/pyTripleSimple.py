@@ -1075,8 +1075,11 @@ class TripleRestrictions(object):
                 literals = []
                 uris = []
                 for element in restriction[2]:
-                    if element[0] == "<" and element[-1] == ">":
-                        uris.append(element)
+                    if len(element):
+                        if element[0] == "<" and element[-1] == ">":
+                            uris.append(element)
+                        else:
+                            literals.append(element)
                     else:
                         literals.append(element)
                 if len(uris):
