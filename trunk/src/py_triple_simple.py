@@ -77,6 +77,13 @@ def main():
                       default = "\t",
                       help = "Delimiter to use in table output")
 
+    parser.add_option("--clean",
+                      action = "store",
+                      dest = "clean",
+                      default = 0,
+                      help = "Strips string and <> uri designations")
+
+
     (options, args) = parser.parse_args()
 
     ts = pyTripleSimple.SimpleTripleStore() #pyTripleSimple.ShelveTripleEngine(ntriples_file_name)
@@ -172,6 +179,9 @@ def main():
 
                 for result in result_set:
                     for solution in result[0]:
+                        if options.clean:
+                            if len(solution):
+                                solution = solution[1:-1]
                         string_tab += "%s%s" % (solution,delimiter)
                     string_tab += "%s\n" % result[1]
 
