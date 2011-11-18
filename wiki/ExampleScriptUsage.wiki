@@ -5,7 +5,7 @@
 The program/script "py_triple_simple.py" provides a command line interface into the pyTripleSimple.py module.  
 Examples are shown using an ABox dump of a [http://vivoweb.org/ VIVO site] and a free-text index built using the "generate_free_text_triples.py". An automated dump of VIVO can be generated using the [http://code.google.com/p/sbu-mi-vivo-tools/ sbu-mi-vivo-tools] or as a site administer.
 
-= Ntriple Statistics =
+= N-triple statistics =
 
 The simplest usage of the script is to generate elementary statistics on a ntriples file.
 
@@ -56,7 +56,6 @@ Number of triples 221149 loaded in 12.12 seconds (18246.6171617 triples/second)
 
 = Pattern matching/querying =
 
-
 {{{
 pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
 -q "[('a','p1','b'),('a','p2','c')]"  \
@@ -105,7 +104,7 @@ Produces output:
 
 The script supports a diagnostic output, delimited output (tab delimited), and JSON based output formats. The script output can be written to console or to text file.
 
-Here I am querying to get all PubMed Ids back from a VIVO site
+Here I am querying to get all PubMed Ids back from a VIVO dump
 {{{
 janos@janosworkstation:~/workspace/sbu-mi-vivo-tools$ pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt -c query \
 -q "[('a','p','c')]" \n
