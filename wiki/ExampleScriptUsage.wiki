@@ -127,7 +127,8 @@ c	count
 "5440675"	1
 }}}
 
-{{{pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
+{{{
+pypy-c py_triple_simple.py -f reach_abox_2011-11-13.nt \
 -c query -q "[('a','p','c')]" \
 -r "[('p','in',['<http://purl.org/ontology/bibo/pmid>'])]" \
 -v "['a','c']" -o delimited -n 10 --clean=1
@@ -135,14 +136,14 @@ c	count
 Produces output:
 {{{
 a	c	count
-http://reach.suny.edu/individual/a11740726	11740726	1
-http://reach.suny.edu/individual/a17502569	17502569	1
-http://reach.suny.edu/individual/a14988635	14988635	1
-http://reach.suny.edu/individual/a11292642	11292642	1
-http://reach.suny.edu/individual/a20513327	20513327	1
-http://reach.suny.edu/individual/a9802626	9802626	1
-http://reach.suny.edu/individual/a9607513	9607513	1
-http://reach.suny.edu/individual/a20935045	20935045	1
-http://reach.suny.edu/individual/a8304260	8304260	1
-http://reach.suny.edu/individual/a11940547	11940547	1
+http://example.org/individual/a11740726	11740726	1
+http://example.org/individual/a17502569	17502569	1
+http://example.org/individual/a14988635	14988635	1
+http://example.org/individual/a11292642	11292642	1
+http://example.org/individual/a20513327	20513327	1
+http://example.org/individual/a9802626	9802626	1
+http://example.org/individual/a9607513	9607513	1
+http://example.org/individual/a20935045	20935045	1
+http://example.org/individual/a8304260	8304260	1
+http://example.org/individual/a11940547	11940547	1
 }}}
