@@ -76,7 +76,7 @@ class GephiGexf(object):
         return 5 * '\t' + "</edges>\n"
     
     def open_edge(self,id,source,target, weight=1):
-        return 6 * '\t' + '<edge id="%s" source="%s" target="%s", weight="%s">\n' % (id,source,target,weight)
+        return 6 * '\t' + '<edge id="%s" source="%s" target="%s" weight="%s">\n' % (id,source,target,weight)
     
     def close_edge(self):
         return 6 * '\t' + '</edge>\n'
