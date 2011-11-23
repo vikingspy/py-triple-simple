@@ -5,6 +5,7 @@ __author__="janos"
 __date__ ="$Jun 7, 2011 11:10:39 AM$"
 
 from xml.sax.saxutils import escape
+import time
 
 class GephiGexf(object):
     "A class for generating gephi xml graphs that are read by Gephi"
@@ -57,7 +58,7 @@ class GephiGexf(object):
         return 5 * '\t' + '</nodes>\n'
     
     def open_node(self, id, label, size="1.0"):
-        return 6 * '\t' + '<node id="%s" label="%s" size="%s">\n' % (id,escape(label),size)
+        return 6 * '\t' + '<node id="%s" label="%s"><viz:size value="%s"/>\n' % (id,escape(label),size)
     
     def close_node(self):
         return 6 * '\t' +'</node>\n'
