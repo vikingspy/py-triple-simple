@@ -8,7 +8,7 @@ from xml.sax.saxutils import escape
 import time
 
 class GephiGexf(object):
-    "A class for generating gephi xml graphs that are read by Gephi"
+    """A class for generating gephi xml graphs that are read by Gephi"""
     def __init__(self):
         pass
     
