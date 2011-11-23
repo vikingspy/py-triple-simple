@@ -1,7 +1,16 @@
-#summary An example of how to use the API in a Python program
+#summary An example of how to use the API in a novel Python program
 
 = Introduction =
 
-The reason I began to write the py-triple-simple library was that I couldn't find a pure Python library for working with RDF serialized as n-triples. I am interested in experimenting in using RDF for data analytical tasks.  The example here goes through in creating a visualization in Gephi of a RDF class structure and relations between classes.
+The example here goes through in creating a visualization for [Gephi http://gephi.org/] of a RDF class structure and the relations between these classes.
 
 = Details =
+
+The source for this example is in the program []
+
+We import the pyTripleSimple into pyt namespace and the GephiGexf xml
+generator class.
+{{{
+import pyTripleSimple as pyt
+from gexf import GephiGexf
+}}}
