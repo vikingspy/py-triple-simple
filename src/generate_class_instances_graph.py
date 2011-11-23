@@ -27,7 +27,7 @@ def main(ntriples_file_name):
     class_count_normalized = [class_size/class_mean for class_size in class_sizes] # normalize the count by the mean
 
     # Get all definitions from typed objects
-    property_class_results = ts.simple_pattern_match([('a','p','b'),('a','t','ca'),(('a','t','cb'))],[('t','in',[rdf_type]),('p','!=','t')],['p','ca','cb'])
+    property_class_results = ts.simple_pattern_match([('a','p','b'),('a','t','ca'),(('b','t','cb'))],[('t','in',[rdf_type]),('p','!=','t')],['p','ca','cb'])
     property_class_relations_count = len(property_class_results)
     property_class_relations_sizes = [property_class_result[1] for property_class_result in property_class_results]
     property_class_mean = (1.0 * sum(property_class_relations_sizes)) / property_class_relations_count
