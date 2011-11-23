@@ -2,11 +2,11 @@
 
 = Introduction =
 
-The example here goes through in creating a visualization for [Gephi http://gephi.org/] of a RDF class structure and the relations between these classes.
+The example here goes through creating a visualization for [http://gephi.org/ Gephi] of a RDF class structure and the relations between different classes.
 
 = Details =
 
-The source for this example is in the program []
+The source for this example is in the program [http://code.google.com/p/py-triple-simple/source/browse/trunk/src/generate_class_instances_graph.py generate_class_instances_graph.py]
 
 We import the pyTripleSimple into pyt namespace and the GephiGexf xml
 generator class.
@@ -14,3 +14,14 @@ generator class.
 import pyTripleSimple as pyt
 from gexf import GephiGexf
 }}}
+
+Now we can initialize triple store
+{{{
+ts = pyt.SimpleTripleStore() #Create a triple store object
+}}}
+and load the N-triples file. 
+{{{
+f = open(ntriples_file_name)
+ts.load_ntriples(f)
+}}}
+Your n-triples file is now in memory with indices on subjects, predicates, and objects. Everything is in memory so a large 10 million triple file can consume up to 10 gigabytes of RAM.
