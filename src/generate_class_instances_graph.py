@@ -40,18 +40,33 @@ def main(ntriples_file_name):
     gexf_string += gexf.metadata()
     gexf_string += gexf.open_graph()
 
-
+    class_dict = {}
     gexf_string += gexf.open_nodes()
     for i in range(class_count):
-        gexf_string += gexf.open_node(classes_result[i][0][0][1:-1],classes_result[i][0][0][1:-1],size=class_count_normalized[i])
+        class_name = classes_result[i][0][0][1:-1]
+        class_dict[class_name] = i
+        gexf_string += gexf.open_node(i,classes_result[i][0][0][1:-1],size=class_count_normalized[i])
         gexf_string += gexf.close_node()
     gexf_string += gexf.close_nodes()
 
-    gexf_string += gexf.open_edges()
+    property_dict = {}
     for i in range(property_class_relations_count):
-        #print(property_class_result[i][0])
-        gexf_string += gexf.open_edge(i,property_class_results[i][0][1][1:-1],property_class_results[i][0][2][1:-1])
+        subject, object = (property_class_results[i][0][1][1:-1],property_class_results[i][0][2][1:-1])
+        subject_id = class_dict[subject]
+        object_id = class_dict[object]
+        relation_pair = (subject_id,object_id)
+        if relation_pair in property_dict:
+            property_dict[relation_pair] += property_class_count_normalized[i]
+        else:
+            property_dict[relation_pair] = property_class_count_normalized[i]
+
+
+    gexf_string += gexf.open_edges()
+    i = 0
+    for relation_pair in property_dict.keys():
+        gexf_string += gexf.open_edge(i,relation_pair[0], relation_pair[1], property_dict[relation_pair])
         gexf_string += gexf.close_edge()
+        i += 1
     gexf_string += gexf.close_edges()
 
     gexf_string += gexf.close_graph()
@@ -67,6 +82,4 @@ def convert_pattern_match_result_to_dict(pattern_result_list):
     return converted_dict
 
 if __name__ == "__main__":
-    #main("/home/janos/workspace/sbu-mi-vivo-tools/reach_abox_2011-11-13.nt")
-    #main("/home/janos/Desktop/rdf/acme.nt")
     main(sys.argv[1])
