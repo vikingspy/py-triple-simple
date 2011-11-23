@@ -38,4 +38,6 @@ Here we match all triple which have predicate  rdf_type = "<http://www.w3.org/19
 property_class_results = ts.simple_pattern_match([('a','p','b'),('a','t','ca'),(('b','t','cb'))],[('t','in',[rdf_type]),('p','!=','t')],['p','ca','cb'])
 }}}
 
+
+The final output in Gephi after applying the Fruchterman-Reingold algorithm and some manual aesthetics is:
 [http://dl.dropbox.com/u/21690634/reach-nolabels-small.png]
