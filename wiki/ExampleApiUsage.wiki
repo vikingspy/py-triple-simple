@@ -30,7 +30,7 @@ The first step is to get counts on the number of distinct classes with counts us
 {{{
 classes_result = ts.simple_pattern_match([('a','t','c')],[('t','in',[rdf_type])],['c'])
 }}}
-Here we match all triple which have predicate = rdf_type <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.  By only asking to return the class 'c' in the result set the method automatically groups and counts by 'c'.  The results are returned like this:
+Here we match all triple which have predicate = rdf_type <http://www.w3.org/1999/02/22-rdf-syntax-ns#type>.  By only asking to return the class 'c' in the result set the method automatically groups and counts by 'c'.  The results are returned like this:
 {{{
 [[(),5]]
 }}}
