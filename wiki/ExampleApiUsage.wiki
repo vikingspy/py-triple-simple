@@ -2,7 +2,7 @@
 
 = Introduction =
 
-The example here creates a graph visualization using [http://gephi.org/ Gephi] of a RDF class structure and the relations between different class instances.
+The example here creates a graph visualization using [http://gephi.org/ Gephi] of a RDF class structure and the relations between different class instances. This might be of interest if you you want to visualize the rich ontological structure of a [http://vivoweb.org Vivo] site.
 
 = Details =
 
