@@ -24,16 +24,17 @@ and load the N-triples file.
 f = open(ntriples_file_name)
 ts.load_ntriples(f)
 }}}
-Your n-triples file is now in memory with indices on subjects, predicates, and objects for fast retrieval.
+The n-triples file is now in memory with indices on subjects, predicates, and objects for fast retrieval.
 
 The first step is to get counts on the number of distinct classes with counts using the simple_pattern_match method:
 {{{
 classes_result = ts.simple_pattern_match([('a','t','c')],[('t','in',[rdf_type])],['c'])
 }}}
-Here we match all triple which have predicate  rdf_type = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>".  By only asking to return the variable 'c' in the result set the method automatically groups and counts by 'c'.  The results are returned like this:
+Here all triple which have predicate  rdf_type = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>" are matched.  By only asking to return the variable 'c' in the result set the method automatically groups and counts by 'c'.  The results are returned like this:
 {{{
 [[(),5]]
 }}}
+This is a more complicated match which finds the predicate 't' between classes 'ca' and 'cb'
 {{{
 property_class_results = ts.simple_pattern_match([('a','p','b'),('a','t','ca'),(('b','t','cb'))],[('t','in',[rdf_type]),('p','!=','t')],['p','ca','cb'])
 }}}
