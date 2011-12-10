@@ -8,14 +8,13 @@ The example here creates a graph visualization using [http://gephi.org/ Gephi] o
 
 The source for this example is in the program [http://code.google.com/p/py-triple-simple/source/browse/trunk/src/generate_class_instances_graph.py generate_class_instances_graph.py]
 
-We import the pyTripleSimple into pyt namespace and the GephiGexf xml
+First import the pyTripleSimple into pyt the namespace and the GephiGexf xml
 generator class.
 {{{
 import pyTripleSimple as pyt
-from gexf import GephiGexf
-}}}
+from gexf import GephiGexf library.
 
-Now we can initialize triple store
+First initialize triple store:
 {{{
 ts = pyt.SimpleTripleStore() #Create a triple store object
 }}}
@@ -24,7 +23,7 @@ and load the N-triples file.
 f = open(ntriples_file_name)
 ts.load_ntriples(f)
 }}}
-Your n-triples file is now in memory with indices on subjects, predicates, and objects. Everything is in memory so a large 10 million triple file can consume up to 10 gigabytes of RAM.
+Your n-triples file is now in memory with indices on subjects, predicates, and objects for fast retrieval.
 
 The first step is to get counts on the number of distinct classes with counts using the simple_pattern_match method:
 {{{
