@@ -8,8 +8,7 @@ The example here creates a graph visualization using [http://gephi.org/ Gephi] o
 
 The source for this example is in the program [http://code.google.com/p/py-triple-simple/source/browse/trunk/src/generate_class_instances_graph.py generate_class_instances_graph.py]
 
-First import the pyTripleSimple into pyt the namespace and the [http://code.google.com/p/py-triple-simple/source/browse/trunk/src/lib/gexf.py GephiGexf xml
- class].
+First import the pyTripleSimple into pyt the namespace and the [http://code.google.com/p/py-triple-simple/source/browse/trunk/src/lib/gexf.py GephiGexf] class.
 {{{
 import pyTripleSimple as pyt
 from gexf import GephiGexf
