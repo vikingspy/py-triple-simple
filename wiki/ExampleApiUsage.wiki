@@ -41,4 +41,4 @@ property_class_results = ts.simple_pattern_match([('a','p','b'),('a','t','ca'),(
 
 By looping through the matched result sets a weight is set to the nodes which are classes and different predicates which are edges.  The final output in Gephi after applying the [http://en.wikipedia.org/wiki/Force-based_algorithms_%28graph_drawing%29 Fruchterman-Reingold] algorithm and some manual aesthetics is:
 [http://dl.dropbox.com/u/21690634/reach-nolabels-small.png]
-The visualization provides a high level overview of the structure of the ontological structure of the triples files and the relative importance of classes and different predicates.  
+The visualization of the Ntriples  provides a high level overview of the ontological structure and the relative importance of classes and different predicates.  
