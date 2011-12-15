@@ -7,7 +7,7 @@ Examples are shown using an ABox dump of a [http://vivoweb.org/ VIVO site] and a
 
 = N-triple statistics =
 
-The simplest usage of the script is to generate elementary statistics on a ntriples file.
+The simplest usage of the script is to generate elementary statistics on a N-triples file.
 
 {{{
 pypy-c py_triple_simple.py -c statistics -f reach_abox_2011-11-13.nt.http%3A__www.w3.org_2000_01_rdf-schema%23label.nt -n 5
