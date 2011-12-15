@@ -102,7 +102,7 @@ Produces output:
 
 = Output formats =
 
-The script supports a diagnostic output, delimited output (tab delimited), and JSON based output formats. The script output can be written to console or to text file.
+The script supports a diagnostic output, delimited output (tab delimited), and JSON based output formats. The script output can be written to a console or to a text file.
 
 Here I am querying to get all PubMed Ids back from a VIVO dump
 {{{
