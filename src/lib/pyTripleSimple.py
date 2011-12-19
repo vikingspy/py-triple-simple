@@ -283,32 +283,32 @@ class SimpleTripleStore(object):
         t2_symbol = self._add_symbol(t2)
         t3_symbol = self._add_symbol(t3)
                 
-        t1_addr = triple_object.subject_type() + str(t1_symbol)
-        t2_addr = triple_object.predicate_type() + str(t2_symbol)
-        t3_addr = triple_object.object_type() + str(t3_symbol)
+        t1_address = triple_object.subject_type() + str(t1_symbol)
+        t2_address = triple_object.predicate_type() + str(t2_symbol)
+        t3_address = triple_object.object_type() + str(t3_symbol)
         
-        self.te.objects[t1_addr] = t1
-        self.te.objects[t2_addr] = t2
-        self.te.objects[t3_addr] = t3
+        self.te.objects[t1_address] = t1
+        self.te.objects[t2_address] = t2
+        self.te.objects[t3_address] = t3
         
         triple_address = self.n_triples() + 1
-        self.te.triples[self.te.key_store(triple_address)] = self.te.triple_store((t1_addr,t2_addr,t3_addr))
+        self.te.triples[self.te.key_store(triple_address)] = self.te.triple_store((t1_address,t2_address,t3_address))
         
         #Build indices for quicker retrieval
-        if self.te.subjects_index.has_key(t1_addr):
-            self.te.subjects_index[t1_addr].append(triple_address)
+        if self.te.subjects_index.has_key(t1_address):
+            self.te.subjects_index[t1_address].append(triple_address)
         else:
-            self.te.subjects_index[t1_addr] = [triple_address]
+            self.te.subjects_index[t1_address] = [triple_address]
             
-        if self.te.predicates_index.has_key(t2_addr):
-            self.te.predicates_index[t2_addr].append(triple_address)
+        if self.te.predicates_index.has_key(t2_address):
+            self.te.predicates_index[t2_address].append(triple_address)
         else:
-            self.te.predicates_index[t2_addr] = [triple_address]
+            self.te.predicates_index[t2_address] = [triple_address]
             
-        if self.te.objects_index.has_key(t3_addr):
-            self.te.objects_index[t3_addr].append(triple_address)
+        if self.te.objects_index.has_key(t3_address):
+            self.te.objects_index[t3_address].append(triple_address)
         else:
-            self.te.objects_index[t3_addr] = [triple_address]
+            self.te.objects_index[t3_address] = [triple_address]
         
         return triple_address
         
@@ -420,11 +420,11 @@ class SimpleTripleStore(object):
     def predicates(self,uri):
         """For an object specified by uri return all associated triples"""
         uri = self._uri_check(uri)
-        uri_addr = self._encode_uri(uri)
+        uri_address = self._encode_uri(uri)
         
-        if uri_addr:
-            if self.te.predicates_index.has_key(uri_addr):
-                return [self._decode_triple_formatted(t) for t in self.te.predicates_index[uri_addr]]
+        if uri_address:
+            if self.te.predicates_index.has_key(uri_address):
+                return [self._decode_triple_formatted(t) for t in self.te.predicates_index[uri_address]]
             
     def export_to_ntriples_file(self,f):
         """For file object write the triples to file"""
