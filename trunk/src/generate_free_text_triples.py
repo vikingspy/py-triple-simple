@@ -1,5 +1,5 @@
 """
-    Creates a free text index from ntriples based file.
+    Generates a free text index from an ntriples file.
 """
 
 __author__ = 'Janos G. Hajagos'

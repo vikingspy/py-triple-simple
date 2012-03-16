@@ -20,26 +20,6 @@ class FreeTextLexer(Lexer):
     def __init__(self):
         self.regex_rules = re.compile(r"[ \t\n\.\!\?,;\:]+")
 
-class FreeTextExpander(object):
-    def __init__(self, n_words_look_ahead):
-        self.n_words_look_ahead = n_words_look_ahead
-        self.regex_rules = re.compile(r"[ \t\n\.\!\?,;\:]+")
-    def parse(self, phrase):
-        match_positions = [(x.start(),x.end()) for x in list(self.regex_rules.finditer(" " + phrase))]
-        word_boundaries = []
-        for i in range(len(match_positions)-1):
-            word_boundaries.append((match_positions[i][1], match_positions[i+1][0]))
-
-        number_of_words = len(word_boundaries)
-        words_phrases = []
-        for i in range(number_of_words):
-            word_phrase = []
-            for j in range(self.n_words_look_ahead):
-                if i+j < number_of_words:
-                    word_phrase.append(phrase[word_boundaries[i][0]-1:word_boundaries[i+j][1]-1])
-            words_phrases.append(word_phrase)
-        return words_phrases
-
 class FreeTextSimpleTripleStore(object):
     """Generates a free text index of a SimpleTripleStore"""
     def __init__(self, triple_simple_store, predicates_to_index = [rdfs_label]):
@@ -71,6 +51,39 @@ class FreeTextSimpleTripleStore(object):
             file_names_to_write.append(file_name_to_write)
         return file_names_to_write
 
+class FreeTextExpander(object):
+    def __init__(self, n_words_look_ahead):
+        self.n_words_look_ahead = n_words_look_ahead
+        self.regex_rules = re.compile(r"[ \t\n\.\!\?,;\:]+")
+    def parse(self, phrase):
+        match_positions = [(x.start(),x.end()) for x in list(self.regex_rules.finditer(" " + phrase))]
+        word_boundaries = []
+        for i in range(len(match_positions)-1):
+            word_boundaries.append((match_positions[i][1], match_positions[i+1][0]))
+
+        number_of_words = len(word_boundaries)
+        words_phrases = []
+        for i in range(number_of_words):
+            word_phrase = []
+            for j in range(self.n_words_look_ahead):
+                if i+j < number_of_words:
+                    word_phrase.append(phrase[word_boundaries[i][0]-1:word_boundaries[i+j][1]-1])
+            words_phrases.append(word_phrase)
+        return words_phrases
+
+class FreeTextExpanderTripleStore(FreeTextSimpleTripleStore):
+    def generate(self, n_look_ahead = 3):
+        self.n_look_ahead = n_look_ahead
+        for predicate_to_index in self.predicates_to_index:
+            triples = self.triple_simple_store.predicates(predicate_to_index)
+            if triples:
+                for triple in triples:
+                    phrases_obj = FreeTextExpander(self.n_look_ahead)
+                    for phrase_words in phrases_obj.parse(triple[2][1:-1]):
+                        i = 1
+                        for phrase_word in phrase_words:
+                            self.predicates_triple_store[predicate_to_index].add_triple(pyTripleSimple.SimpleTriple(triple[0][1:-1], self.predicate_for_word + str(i), phrase_word,"uul"))
+                            i = i + 1
 
 def main(ntriples_file_name,free_text_predicates=None):
     f = open(ntriples_file_name,"r")
@@ -97,5 +110,4 @@ def main(ntriples_file_name,free_text_predicates=None):
         print("Wrote '%s'" % file_name)
 
     return file_names
-            
 
