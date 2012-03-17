@@ -343,8 +343,6 @@ class SimpleTripleStore(object):
         t3 = self._decode_address(triple[2])
         return (t1,t2,t3)
 
-
-
     def triple_address_to_simple_triple(self,triple_address):
         """Given an address to a triple returns a triple Simple Object"""
         triple = self.te.triples[triple_address]
@@ -721,7 +719,7 @@ class SimpleTripleStore(object):
         if return_type == "raw":
             return raw_results
         elif return_type == "triples":
-            return [self.triple_engine.triple_address_to_simple_triple(triple_address) for triple_address in raw_results]
+            return [self.triple_address_to_simple_triple(triple_address) for triple_address in raw_results]
         elif return_type == "ntriples":
             pass
 

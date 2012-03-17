@@ -1,0 +1,5 @@
+<http://link.informatics.stonybrook.edu/umls/SUI/S1424345>	<http://www.w3.org/2000/01/rdf-schema#labels>	"squamous cell" .
+<http://link.informatics.stonybrook.edu/umls/SUI/S11848571>	<http://www.w3.org/2000/01/rdf-schema#labels>	"anal carcinoma" .
+<http://link.informatics.stonybrook.edu/umls/SUI/S1430101>	<http://www.w3.org/2000/01/rdf-schema#labels>	"E. coli" .
+<http://link.informatics.stonybrook.edu/umls/SUI/S0047379>	<http://www.w3.org/2000/01/rdf-schema#labels>	"Helicobacter pylori" .
+<http://link.informatics.stonybrook.edu/umls/SUI/S0289344>	<http://www.w3.org/2000/01/rdf-schema#labels>	"intracellular" .
