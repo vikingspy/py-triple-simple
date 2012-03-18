@@ -118,11 +118,9 @@ def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align =
             result = alignment_obj.simple_pattern_match([("s","p","o")], [("o", "in", [fragment.object])],["s"])
             if result:
                 aligned_obj.load_ntriples(["<%s> <%s> %s ." % (fragment.subject, alignment_uri, result[0][0][0])])
-
     ntriples_aligned_file = ntriples_file_to_align + ".alignment.nt"
     print("Exporting aligned file")
 
-    print(ntriples_aligned_file)
     fo = open(ntriples_aligned_file,"w")
     aligned_obj.export_to_ntriples_file(fo)
     fo.close()
