@@ -23,5 +23,3 @@ if __name__ == "__main__":
                 ftt.align_ntriples(ntriples_to_align, alignment_source, number_of_words_to_split)
             else:
                 ftt.align_ntriples(ntriples_to_align, alignment_source, properties, number_of_words=number_of_words_to_split)
-
-

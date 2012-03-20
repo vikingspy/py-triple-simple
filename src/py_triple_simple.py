@@ -56,7 +56,7 @@ def main():
                       action ="store",
                       dest="output_format",
                       default="stdout",
-                      help="Query output format: stdout, json, delimited")
+                      help="Query output format: stdout, json, delimited, ntriples")
 
     parser.add_option("-w","--output-file",
                           action ="store",
@@ -153,6 +153,29 @@ def main():
             if options.output_format == "stdout":
                 pprint.pprint(result_set)
                 print("Query returned %s results" % len(result_set))
+            elif options.output_format == "ntriples":
+                if options.output_file_name:
+                    try:
+                        fo = open(options.output_file_name,'w')
+                    except IOError:
+                        raise
+
+                for result in result_set:
+                    ntriples_string = ""
+                    i = 1
+                    for solution in result[0]:
+                        if i % 3 == 1:
+                            ntriples_string += result[0][0] + " "
+                        elif i % 3 == 2:
+                            ntriples_string += result[0][1] + " "
+                        elif i % 3 == 0:
+                            ntriples_string += result[0][2] + " .\n"
+                        i += 1
+                    if options.output_file_name:
+                        fo.write(ntriples_string)
+                    else:
+                        print(ntriples_string[:-1])
+
             elif options.output_format == "json":
                 import json
                 if options.output_file_name:
