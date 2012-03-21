@@ -27,10 +27,11 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
 
     def test_EmbeddedQuote(self):
         ts = pyTripleSimple.SimpleTripleStore()
-        ts.load_ntriples([r'<http://link.informatics.stonybrook.edu/umls/SUI/S7018982> <http://www.w3.org/2000/01/rdf-schema#label> "Instruct parent/caregiver of infant 0-3 months to limit water intake to Z\\\"x oz to 1 oz at a time, 4 oz daily" .'])
+        ts.load_ntriples([r'<http://link.informatics.stonybrook.edu/umls/SUI/S7018982> <http://www.w3.org/2000/01/rdf-schema#label> "Instruct parent/caregiver of infant 0-3 months to limit water intake to Z\\\"x oz to 1 oz at a time, 4 oz daily" .',
+                          r'<http://link.informatics.stonybrook.edu/umls/SUI/S11718919> <http://www.w3.org/2000/01/rdf-schema#label> "Vetscription Worm Away 7 Praziquantel 30 MG \\\" Pyrantel Pamoate 30 MG Chewable Tablet" .'])
         triples = list(ts.iterator_triples())
         self.assertEquals(triples[0].object,r"Instruct parent/caregiver of infant 0-3 months to limit water intake to Z\\\"x oz to 1 oz at a time, 4 oz daily")
-
+        self.assertEquals(triples[1].object,r"Vetscription Worm Away 7 Praziquantel 30 MG \\\" Pyrantel Pamoate 30 MG Chewable Tablet")
     def test_find_triples(self):
         ts = pyTripleSimple.SimpleTripleStore()
         ts.load_ntriples(self.test_source)
@@ -130,7 +131,6 @@ class  TestTripleRestrictions(unittest.TestCase):
     def test_restrictions(self):
         restrictions1 = [("a","!=","b"),("a", "in", ("<http://example.org/1>","<http://example.org/2>"))]
         restrictions1_obj = pyTripleSimple.TripleRestrictions(restrictions1)
-
 
         restrictions2 = [("a","!=","b"),("a", "in", ["<http://example.org/1>","<http://example.org/2>"])]
         restrictions2_obj = pyTripleSimple.TripleRestrictions(restrictions2)

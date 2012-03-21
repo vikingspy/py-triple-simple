@@ -141,10 +141,24 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                     state = "LiteralEnd"
                     triples.append(line[start_state_position:i])
                     triple_types += "l"
-                elif line[i] == '"' and line[i-1] == "\\" and line[i-2] == "\\" and (line[i+1] == " " or line[i+1] == "."):
-                    state = "LiteralEnd"
-                    triples.append(line[start_state_position:i])
-                    triple_types += "l"
+                elif line[i] == '"' and line[i-1] == "\\" and line[i-2] == "\\":
+                    scorer = 0
+                    for j in range(len(line[i:]) - 1):
+                        if line[i + 1 + j] == " ":
+                            scorer += 0
+                        elif line[i + 1 + j] == "\t":
+                            scorer += 0
+                        elif line[i+ 1 + j] == ".":
+                            scorer += 0
+                        elif line[i + 1 + j] == "\n":
+                            scorer += 0
+                        else:
+                            scorer += 1
+
+                    if scorer == 0:
+                        state = "LiteralEnd"
+                        triples.append(line[start_state_position:i])
+                        triple_types += "l"
 
             elif state == "LiteralEnd":
                 if line[i] == ".":
