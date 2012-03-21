@@ -56,8 +56,9 @@ class FreeTextExpander(object):
     def __init__(self, n_words_look_ahead):
         self.n_words_look_ahead = n_words_look_ahead
         self.regex_rules = re.compile(r"[ \t\n\.\!\?,;\:]+")
+
     def parse(self, phrase):
-        match_positions = [(x.start(),x.end()) for x in list(self.regex_rules.finditer(" " + phrase))]
+        match_positions = [(x.start(),x.end()) for x in list(self.regex_rules.finditer(" " + phrase + " "))]
         word_boundaries = []
         for i in range(len(match_positions)-1):
             word_boundaries.append((match_positions[i][1], match_positions[i+1][0]))
@@ -67,7 +68,7 @@ class FreeTextExpander(object):
         for i in range(number_of_words):
             word_phrase = []
             for j in range(self.n_words_look_ahead):
-                if i+j < number_of_words:
+                if i + j < number_of_words:
                     word_phrase.append(phrase[word_boundaries[i][0]-1:word_boundaries[i+j][1]-1])
             words_phrases.append(word_phrase)
         return words_phrases
@@ -114,7 +115,6 @@ def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align =
         fragments_obj = pyTripleSimple.SimpleTripleStore()
         print("Loading fragments to align into memory '%s'" % alignment_file)
         fragments_obj.load_ntriples(faf)
-
         for fragment in fragments_obj.iterator_triples():
             result = alignment_obj.simple_pattern_match([("s","p","o")], [("o", "in", [fragment.object])],["s"])
 
