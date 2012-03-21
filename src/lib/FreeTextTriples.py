@@ -6,6 +6,7 @@ import urllib
 import os
 import string
 import time
+import pprint
 
 rdfs_label = pyTripleSimple.common_prefixes["rdfs"] + "label"
 
@@ -113,11 +114,13 @@ def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align =
         fragments_obj = pyTripleSimple.SimpleTripleStore()
         print("Loading fragments to align into memory '%s'" % alignment_file)
         fragments_obj.load_ntriples(faf)
-        #print(list(alignment_obj.iterator_ntriples()))
+
         for fragment in fragments_obj.iterator_triples():
             result = alignment_obj.simple_pattern_match([("s","p","o")], [("o", "in", [fragment.object])],["s"])
+
             if result:
                 aligned_obj.load_ntriples(["<%s> <%s> %s ." % (fragment.subject, alignment_uri, result[0][0][0])])
+
     ntriples_aligned_file = ntriples_file_to_align + ".alignment.nt"
     print("Exporting aligned file")
 

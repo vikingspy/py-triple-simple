@@ -3,3 +3,4 @@
 <http://link.informatics.stonybrook.edu/umls/SUI/S1430101>	<http://www.w3.org/2000/01/rdf-schema#labels>	"E. coli" .
 <http://link.informatics.stonybrook.edu/umls/SUI/S0047379>	<http://www.w3.org/2000/01/rdf-schema#labels>	"Helicobacter pylori" .
 <http://link.informatics.stonybrook.edu/umls/SUI/S0289344>	<http://www.w3.org/2000/01/rdf-schema#labels>	"intracellular" .
+<http://link.informatics.stonybrook.edu/umls/SUI/S0360893> <http://www.w3.org/2000/01/rdf-schema#label> "CHO cell" .
