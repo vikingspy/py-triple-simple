@@ -4,7 +4,6 @@ Classes for processing and working with files that follow the ntriples format.
 """
 
 import re
-import pprint
 
 common_prefixes = {"rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"}
 
@@ -142,7 +141,7 @@ class SimpleNtriplesParser(SimpleNtripleExtractor):
                     state = "LiteralEnd"
                     triples.append(line[start_state_position:i])
                     triple_types += "l"
-                elif line[i] == '"' and line[i-1] == "\\" and line[i-2] == "\\":
+                elif line[i] == '"' and line[i-1] == "\\" and line[i-2] == "\\" and (line[i+1] == " " or line[i+1] == "."):
                     state = "LiteralEnd"
                     triples.append(line[start_state_position:i])
                     triple_types += "l"

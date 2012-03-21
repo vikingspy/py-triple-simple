@@ -13,6 +13,7 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
     def test_PyTripleSimpleStore(self):
         ts = pyTripleSimple.SimpleTripleStore()
         ts.load_ntriples(self.test_source)
+
         self.assertEquals(30,ts.n_triples(),"Wrong number of triples extracted")
 
     def test_TripleIterator(self):
@@ -24,6 +25,11 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         result2 = list(ts.iterator_ntriples())
         self.assertEquals(30,len(result2),"Wrong number of triples iterated")
 
+    def test_EmbeddedQuote(self):
+        ts = pyTripleSimple.SimpleTripleStore()
+        ts.load_ntriples([r'<http://link.informatics.stonybrook.edu/umls/SUI/S7018982> <http://www.w3.org/2000/01/rdf-schema#label> "Instruct parent/caregiver of infant 0-3 months to limit water intake to Z\\\"x oz to 1 oz at a time, 4 oz daily" .'])
+        triples = list(ts.iterator_triples())
+        self.assertEquals(triples[0].object,r"Instruct parent/caregiver of infant 0-3 months to limit water intake to Z\\\"x oz to 1 oz at a time, 4 oz daily")
 
     def test_find_triples(self):
         ts = pyTripleSimple.SimpleTripleStore()
