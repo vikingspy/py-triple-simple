@@ -64,8 +64,9 @@ class testBasicWordExtraction(unittest.TestCase):
 
         ts_result = pyTripleSimple.SimpleTripleStore()
         ts_result.load_ntriples(open(file_names[0],"r"))
-        result_set = list(ts_result.iterator_ntriples())
+        result_set = list(ts_result.iterator_triples())
         self.assertTrue(len(result_set))
+        self.assertTrue(result_set[-1].object,"community-dwelling elderly" )
 
     def test_align_ntriples(self):
         align_ntriples = FreeTextTriples.align_ntriples("article_titles.nt","suis_to_align.nt", ["http://purl.org/dc/elements/1.1/title"] )
