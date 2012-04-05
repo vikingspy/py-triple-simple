@@ -138,6 +138,22 @@ class  TestTripleRestrictions(unittest.TestCase):
         restrictions3 = [("a","!=","b"),("a", "in", [""])]
         restrictions3_obj = pyTripleSimple.TripleRestrictions(restrictions3)
 
+class TestExtractGraphFromSimpleTripleStore(unittest.TestCase):
+    def setup(self):
+        pass
+    def test_generate_graphml(self):
+        self.ts = pyTripleSimple.SimpleTripleStore()
+        f = open("acme.nt")
+        self.ts.load_ntriples(f)
+        f.close()
+        egfrsts_obj = pyTripleSimple.ExtractGraphFromSimpleTripleStore(self.ts)
+        egfrsts_obj.register_label()
+        egfrsts_obj.register_class()
+        egfrsts_obj.add_pattern_for_links([['a','b','c']],[('b','in',['<http://acme.com/rdf#isLabeller>'])],("a","c"), "labeller")
+        result_xml = egfrsts_obj.translate_into_graphml_file()
+        print(result_xml)
+
+
 
 
 if __name__ == '__main__':

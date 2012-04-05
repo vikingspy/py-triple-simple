@@ -1,10 +1,10 @@
 import pyTripleSimple
-import gexf
+import graph
 import sys
 import os
 import time
 
-class GexfTripleEngine(pyTripleSimple.TripleEngine,gexf.GexfTriples):
+class GexfTripleEngine(pyTripleSimple.TripleEngine,graph.GexfTriples):
     pass
 
 

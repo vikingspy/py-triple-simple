@@ -7,7 +7,36 @@ __date__ ="$Jun 7, 2011 11:10:39 AM$"
 from xml.sax.saxutils import escape
 import time
 
-class GephiGexf(object):
+
+class GraphXML(object):
+    def __init__(self):
+        pass
+
+    def xml_header(self):
+        pass
+
+    def open_graph(self):
+        pass
+
+    def close_graph(self):
+        pass
+
+    def open_node(self):
+        pass
+
+    def close_node(self):
+        pass
+
+    def open_edge(self):
+        pass
+
+    def close_edge(self):
+        pass
+
+    def close_xml(self):
+        pass
+
+class GephiGexf(GraphXML):
     """A class for generating gephi xml graphs that are read by Gephi"""
     def __init__(self):
         pass
@@ -80,6 +109,50 @@ class GephiGexf(object):
     
     def close_edge(self):
         return 6 * '\t' + '</edge>\n'
+
+
+class GraphML(GraphXML):
+
+    def __init__(self):
+        self.weight_key_id = "edgeKey0"
+
+    def open_xml(self):
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<graphml>
+"""
+    def close_xml(self):
+        return "</graphml>\n"
+
+    def open_graph(self, graph_name="g0",default_graph_type="undirected"):
+        return 1 * "\t" + '<graph id = "%s" edgedefault="%s">\n' % (graph_name, default_graph_type)
+
+    def close_graph(self):
+        return 1 * "\t" + '</graph>\n'
+
+    def define_key(self, identifier, associated_with, key_name, key_type):
+        return 1 * "\t" + '<key id="%s" for="%s" attr.name="%s" attr.type="%s" />\n' % (identifier, associated_with, key_name, key_type)
+
+    def open_node(self, id):
+        return 2 * "\t" + '<node id = "%s">\n' % id
+
+    def close_node(self):
+        return 2 * "\t" + '</node>\n'
+
+    def data(self,key_identifier, value):
+        return 3 * "\t" + '<data key="%s">%s</data>\n' % (key_identifier, value)
+
+    def open_edge(self,id,source,target, weight=None):
+        xml_string = 2 * "\t" + '<edge id="%s" source="%s" target="%s">\n' % (id, source, target)
+        if weight:
+            xml_string += self.data(self.weight_key_id,weight)
+        return xml_string
+
+    def close_edge(self):
+        return 2 * "\t" + "</edge>\n"
+
+    def weight_key(self):
+        return self.define_key("edgeKey0","edge","weight","String")
+
 
 class GexfTriples(object):
     def export_to_gexml(self,gephi_xml_file_name):
