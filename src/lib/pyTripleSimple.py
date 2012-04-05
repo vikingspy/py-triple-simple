@@ -1153,3 +1153,118 @@ class IteratorTripleStoreNtriple(IteratorTripleStore):
     def next(self):
         triple_address = self.triple_address_iterator.next()
         return self.triple_engine.triple_address_to_simple_triple(triple_address).to_ntriple()
+
+
+class ExtractGraphFromSimpleTripleStore(object):
+    """
+        Extract a subgraph from a SimpleTripleStore and translate
+        it into a Graphml compliant format for graph analysis.
+    """
+
+    def __init__(self, triple_store_object):
+        self.ts = triple_store_object
+        self.node_predicate_mappings = {}
+        self.node_reverse_predicate_mappings = {}
+        self.patterns_for_links = []
+        self.referenced_uris = {}
+        self.global_id = 1
+        self.patterns_result_sets = []
+
+    def add_pattern_for_links(self, pattern, restrictions=[], variables = ('a','b'), link_name=None):
+        self.patterns_for_links.append((pattern, restrictions, variables, link_name))
+
+    def register_node_predicate(self,uri,mapped_name):
+        self.node_predicate_mappings[mapped_name] = uri
+        self.node_reverse_predicate_mappings[uri] = mapped_name
+
+    def register_label(self, uri="<http://www.w3.org/2000/01/rdf-schema#label>"):
+        self.register_node_predicate(uri,"Label")
+
+    def register_class(self, uri="<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"):
+        self.register_node_predicate(uri,"Class")
+
+    def populate_referenced_nodes(self, pattern_match_results):
+        for pm_result in pattern_match_results:
+            if pm_result[0][0] in self.referenced_uris:
+                pass
+            else:
+                self.global_id += 1
+                self.referenced_uris[pm_result[0][0]] = self.global_id
+
+            if pm_result[0][1] in self.referenced_uris:
+                pass
+            else:
+                self.global_id += 1
+                self.referenced_uris[pm_result[0][1]] = self.global_id
+
+    def translate_into_graphml_file(self):
+        from graph import GraphML
+
+        for pattern in self.patterns_for_links:
+            pattern_results = self.ts.simple_pattern_match(pattern[0], pattern[1], pattern[2])
+            self.populate_referenced_nodes(pattern_results)
+            self.patterns_result_sets.append(pattern_results)
+
+        graphml_obj = GraphML()
+        xml_string = ""
+        xml_string += graphml_obj.open_xml()
+        n_node_keys = 1
+
+        node_key_map = {}
+        for node_key in self.node_predicate_mappings.keys():
+            key_identifier = "nodeKey" + str(n_node_keys)
+            xml_string += graphml_obj.define_key(key_identifier, "node", node_key, "String")
+            node_key_map[node_key] = key_identifier
+            n_node_keys += 1
+
+        edge_key_map = {}
+        xml_string += graphml_obj.weight_key()
+        edge_key_map["weight"] = graphml_obj.weight_key_id
+        xml_string += graphml_obj.define_key("EdgeKey1","edge","Label","text")
+        edge_key_map["Label"] = "EdgeKey1"
+
+        xml_string += graphml_obj.open_graph("g0","directed")
+
+        for node in self.referenced_uris.keys():
+            node_id = self.referenced_uris[node]
+            xml_string += graphml_obj.open_node(node_id)
+            associated_subject_triples = self.ts.subjects(node)
+
+            predicate_map = {}
+
+            if associated_subject_triples:
+                for triple in associated_subject_triples:
+                    predicate_map[triple[1]] = triple[2]
+
+                for uri in self.node_reverse_predicate_mappings.keys():
+                    if uri in predicate_map:
+                        key_identifier = node_key_map[self.node_reverse_predicate_mappings[uri]]
+                        if len(predicate_map):
+                            data_string = predicate_map[uri][1:-1]
+                        xml_string += graphml_obj.data(key_identifier, data_string)
+
+            xml_string += graphml_obj.close_node()
+
+        i = 0
+        for pattern_result_set in self.patterns_result_sets:
+
+            j = 0
+            for pattern_result in pattern_result_set:
+                uri1 = pattern_result[0][0]
+                uri2 = pattern_result[0][1]
+                weight = pattern_results[1][1]
+
+                uri1_id = self.referenced_uris[uri1]
+                uri2_id = self.referenced_uris[uri2]
+
+                xml_string += graphml_obj.open_edge(j,uri1_id, uri2_id)
+                xml_string += graphml_obj.data(edge_key_map["weight"],weight)
+                xml_string += graphml_obj.data(edge_key_map["Label"],self.patterns_for_links[i][-1])
+                xml_string += graphml_obj.close_edge()
+
+                j += 1
+            i+= 1
+
+        xml_string += graphml_obj.close_graph()
+        xml_string += graphml_obj.close_xml()
+        return xml_string

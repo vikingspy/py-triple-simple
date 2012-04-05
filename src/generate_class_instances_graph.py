@@ -9,7 +9,7 @@
 """
 
 import pyTripleSimple as pyt
-from gexf import GephiGexf
+from graph import GephiGexf
 import sys
 import os
 import pprint
