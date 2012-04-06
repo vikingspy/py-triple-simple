@@ -499,7 +499,6 @@ class SimpleTripleStore(object):
 
 
     def _raw_find_triples(self,subjects_address,predicates_address,objects_address):
-
         n_subjects = len(subjects_address)
         n_objects = len(objects_address)
         n_predicates = len(predicates_address)
@@ -555,14 +554,14 @@ class SimpleTripleStore(object):
                         triples_to_evaluate = self.te.predicates_index[predicate_address]
                         for triples_address_to_evaluate in triples_to_evaluate:
                             triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
-                            if triple_to_evalutae[0] == subject_address:
+                            if triple_to_evaluate[0] == subject_address:
                                 if triple_to_evaluate[2] == object_address:
                                     triples.append(triples_address_to_evaluate)
                     elif n_objects_triples == min_n_triples:
-                        triples_to_evaluate = self.te.predicates_index[objects_address[0]]
+                        triples_to_evaluate = self.te.predicates_index[predicate_address]
                         for triples_address_to_evaluate in triples_to_evaluate:
                             triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
-                            if triple_to_evalute[0] == subject_address:
+                            if triple_to_evaluate[0] == subject_address:
                                 if triple_to_evaluate[1] == predicate_address:
                                     triples.append(triples_address_to_evaluate)
                 elif n_subjects_triples is not None and n_predicates_triples is not None and n_objects_triples is None: #(sp.)
@@ -594,13 +593,13 @@ class SimpleTripleStore(object):
                                 
                 elif n_subjects_triples is None and n_predicates_triples is not None and n_objects_triples is not None: #(.po)
                     if n_predicates_triples <= n_objects_triples:
-                        triples_to_evaluate = self.te.predicates_index[prediaate_address]
+                        triples_to_evaluate = self.te.predicates_index[predicate_address]
                         for triples_address_to_evaluate in triples_to_evaluate:
                             triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
                             if triple_to_evaluate[2] == object_address:
                                 triples.append(triples_address_to_evaluate)
                     else:
-                        triples_to_evaluate = self.te.object_index[object_address]
+                        triples_to_evaluate = self.te.objects_index[object_address]
                         for triples_address_to_evaluate in triples_to_evaluate:
                             triple_to_evaluate = self.te.triples[triples_address_to_evaluate]
                             if triple_to_evaluate[1] == predicate_address:
@@ -774,7 +773,6 @@ class SimpleTripleStore(object):
 
         i = 0
         for pattern in patterns_obj.patterns():
-
             variable1 = pattern[0]
             variable2 = pattern[1]
             variable3 = pattern[2]
@@ -783,11 +781,12 @@ class SimpleTripleStore(object):
             variable2_position = patterns_obj.variables()[variable2]
             variable3_position = patterns_obj.variables()[variable3]
 
-            extended_solution_length = max([variable1_position, variable2_position, variable3_position])
+            extended_solution_length = max([variable1_position + 1, variable2_position + 1, variable3_position + 1])
 
             #Include solutions that have the following URIs and literals
             if variable1 in restrictions_obj.uri_inclusions():
                 subjects = restrictions_obj.uri_inclusions()[variable1]
+
             else:
                 subjects = None
             if variable2 in restrictions_obj.uri_inclusions():
@@ -833,25 +832,25 @@ class SimpleTripleStore(object):
                                 exclusions_to_apply[variable].append(literal_address)
 
             updated_solution_list = []
-            if subjects is not None and variable1_position > solution_length:
+            if (subjects is not None and variable1_position >= solution_length):
                 original_subjects_length = len(subjects)
                 subjects = self._encode_subjects(subjects)
             else:
                 original_subjects_length = 0
                 subjects = []
-            if objects is not None and variable3_position > solution_length:
+            if (objects is not None and variable3_position >= solution_length):
                 original_objects_length = len(objects)
                 objects = self._encode_objects(objects)
             else:
                 objects = []
                 original_objects_length = 0
-            if predicates is not None and variable2_position > solution_length:
+            if predicates is not None and variable2_position >= solution_length:
                 original_predicates_length = len(predicates)
                 predicates = self._encode_predicates(predicates)
             else:
                 original_predicates_length = 0
                 predicates = []
-            if literals is not None and variable3_position > solution_length:
+            if literals is not None and variable3_position >= solution_length:
                 original_literals_length = len(literals)
                 literals = self._encode_literals(literals)
             else:
@@ -889,9 +888,10 @@ class SimpleTripleStore(object):
                 else:
                     solutions = []
                 
-                if len(solutions):
+                if len(solutions): # Check if we have any solution
                     for solution_address in solutions:
                         local_solution_length = solution_length
+
                         solution = self.te.triples[solution_address]
                         new_solution = list(potential_solution[:])
                         if variable1_position + 1 > local_solution_length:
@@ -902,6 +902,7 @@ class SimpleTripleStore(object):
                             local_solution_length += 1
                         if variable3_position + 1 > local_solution_length:
                             new_solution.append(solution[2])
+                            local_solution_length += 1
 
                         is_solution = 1 #explicitly a solution unless otherwise shown
                         # handle internal patterns {(a,a,b),(a,b,a),(b,a,a)}
@@ -1225,6 +1226,7 @@ class ExtractGraphFromSimpleTripleStore(object):
 
         xml_string += graphml_obj.open_graph("g0","directed")
 
+        print("Publishing nodes")
         for node in self.referenced_uris.keys():
             node_id = self.referenced_uris[node]
             xml_string += graphml_obj.open_node(node_id)
@@ -1245,14 +1247,16 @@ class ExtractGraphFromSimpleTripleStore(object):
 
             xml_string += graphml_obj.close_node()
 
+        print("Publishing edges")
         i = 0
-        for pattern_result_set in self.patterns_result_sets:
 
+        for pattern_result_set in self.patterns_result_sets:
             j = 0
+
             for pattern_result in pattern_result_set:
                 uri1 = pattern_result[0][0]
                 uri2 = pattern_result[0][1]
-                weight = pattern_results[1][1]
+                weight = pattern_result[1]
 
                 uri1_id = self.referenced_uris[uri1]
                 uri2_id = self.referenced_uris[uri2]
@@ -1261,6 +1265,8 @@ class ExtractGraphFromSimpleTripleStore(object):
                 xml_string += graphml_obj.data(edge_key_map["weight"],weight)
                 xml_string += graphml_obj.data(edge_key_map["Label"],self.patterns_for_links[i][-1])
                 xml_string += graphml_obj.close_edge()
+                if j % 5000 == 0:
+                    print(j)
 
                 j += 1
             i+= 1
