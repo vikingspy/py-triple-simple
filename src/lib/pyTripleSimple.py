@@ -1198,8 +1198,14 @@ class ExtractGraphFromSimpleTripleStore(object):
                 self.global_id += 1
                 self.referenced_uris[pm_result[0][1]] = self.global_id
 
-    def translate_into_graphml_file(self):
+    def translate_into_graphml_file(self,fileout=None):
         from graph import GraphML
+        import StringIO
+
+        if fileout is None:
+            fo = StringIO.StringIO()
+        else:
+            fo = fileout
 
         for pattern in self.patterns_for_links:
             pattern_results = self.ts.simple_pattern_match(pattern[0], pattern[1], pattern[2])
@@ -1225,6 +1231,8 @@ class ExtractGraphFromSimpleTripleStore(object):
         edge_key_map["Label"] = "EdgeKey1"
 
         xml_string += graphml_obj.open_graph("g0","directed")
+        fo.write(xml_string)
+        xml_string = ""
 
         print("Publishing nodes")
         for node in self.referenced_uris.keys():
@@ -1246,6 +1254,8 @@ class ExtractGraphFromSimpleTripleStore(object):
                         xml_string += graphml_obj.data(key_identifier, data_string)
 
             xml_string += graphml_obj.close_node()
+            fo.write(xml_string)
+            xml_string = ""
 
         print("Publishing edges")
         i = 0
@@ -1265,12 +1275,18 @@ class ExtractGraphFromSimpleTripleStore(object):
                 xml_string += graphml_obj.data(edge_key_map["weight"],weight)
                 xml_string += graphml_obj.data(edge_key_map["Label"],self.patterns_for_links[i][-1])
                 xml_string += graphml_obj.close_edge()
-                if j % 5000 == 0:
-                    print(j)
+
+                fo.write(xml_string)
+                xml_string = ""
 
                 j += 1
             i+= 1
 
         xml_string += graphml_obj.close_graph()
         xml_string += graphml_obj.close_xml()
-        return xml_string
+        fo.write(xml_string)
+
+        if fileout:
+            return fo
+        else:
+            return fo.getvalue()
