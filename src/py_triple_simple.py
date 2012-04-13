@@ -8,6 +8,7 @@
 import time
 import os
 import pprint
+import StringIO
 
 import pyTripleSimple
 
@@ -101,35 +102,45 @@ def main():
         except IOError:
             raise
 
+        if options.output_file_name:
+            try:
+                fo = open(options.output_file_name,'w')
+            except IOError:
+                raise
+
+        else:
+            fo = StringIO.StringIO()
+
+
         if options.command == "statistics":
 
-            print('Loading "%s"' % os.path.abspath(file_name))
+            fo.write('Loading "%s"' % os.path.abspath(file_name))
             start_time = time.clock()
             ts.load_ntriples(f)
             end_time = time.clock()
-            print("Finished loading ntriples file")
+            fo.write("Finished loading ntriples file")
 
             number_of_triples = ts.n_triples()
 
-            print("Number of triples %s loaded in %s seconds (%s triples/second)" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
-            print("Number of distinct lexical symbols: %s" % ts.n_symbols())
+            fo.write("Number of triples %s loaded in %s seconds (%s triples/second)" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
+            fo.write("Number of distinct lexical symbols: %s" % ts.n_symbols())
 
-            print("Number of distinct subjects: %s" % ts.n_subjects())
-            print("Number of distinct predicates: %s" % ts.n_predicates())
+            fo.write("Number of distinct subjects: %s" % ts.n_subjects())
+            fo.write("Number of distinct predicates: %s" % ts.n_predicates())
             n_objects = ts.n_objects()
-            print("Number of distinct objects including literals: %s" % n_objects)
+            fo.write("Number of distinct objects including literals: %s" % n_objects)
             n_literals = ts.n_literals()
-            print("Number of literals: %s" % n_literals)
-            print("Fraction of objects that are literals: %s" % ((n_literals * 1.0) / n_objects ))
-            print("")
-            print("Top subjects are:")
-            pprint.pprint(ts.top_subjects(display_n))
-            print("")
-            print("Top objects are:")
-            pprint.pprint(ts.top_objects(display_n))
-            print("")
-            print("Top predicates are:")
-            pprint.pprint(ts.top_predicates(None))
+            fo.write("Number of literals: %s" % n_literals)
+            fo.write("Fraction of objects that are literals: %s" % ((n_literals * 1.0) / n_objects ))
+            fo.write("")
+            fo.write("Top subjects are:")
+            pprint.pprint(ts.top_subjects(display_n),fo)
+            fo.write("")
+            fo.write("Top objects are:")
+            pprint.pprint(ts.top_objects(display_n),fo)
+            fo.write("")
+            fo.write("Top predicates are:")
+            pprint.pprint(ts.top_predicates(None),fo)
 
         elif options.command == "query":
             ts.load_ntriples(f)
@@ -151,52 +162,32 @@ def main():
                 result_set = result_set[:display_n]
 
             if options.output_format == "stdout":
-                pprint.pprint(result_set)
-                print("Query returned %s results" % len(result_set))
+                pprint.pprint(result_set, fo)
+                fo.write("Query returned %s results" % len(result_set))
             elif options.output_format == "ntriples":
-                if options.output_file_name:
-                    try:
-                        fo = open(options.output_file_name,'w')
-                    except IOError:
-                        raise
-
                 for result in result_set:
-                    ntriples_string = ""
                     i = 1
                     for solution in result[0]:
                         if i % 3 == 1:
-                            ntriples_string += result[0][0] + " "
+                            fo.write(result[0][0] + " ")
                         elif i % 3 == 2:
-                            ntriples_string += result[0][1] + " "
+                            fo.write(result[0][1] + " ")
                         elif i % 3 == 0:
-                            ntriples_string += result[0][2] + " .\n"
+                            fo.write(result[0][2] + " .\n")
                         i += 1
-                    if options.output_file_name:
-                        fo.write(ntriples_string)
-                    else:
-                        print(ntriples_string[:-1])
 
             elif options.output_format == "json":
                 import json
-                if options.output_file_name:
-                    try:
-                        fo = open(options.output_file_name,'w')
-                    except IOError:
-                        raise
-                    json.dump(result_set,fo)
-                    fo.close()
-                else:
-                    print(json.dumps(result_set))
+                json.dump(result_set, fo)
             elif options.output_format == "delimited":
                 header = options.header
                 delimiter = options.delimiter
-                #strip_uris = options.strip_uris
                 string_tab = ""
                 if header:
                     if len(result_set):
                         for solution_variable in solution_variables:
-                            string_tab += "%s%s" % (solution_variable,delimiter)
-                        string_tab += "count\n"
+                            fo.write("%s%s" % (solution_variable, delimiter))
+                        fo.write("count\n")
                 else:
                     pass
 
@@ -205,18 +196,16 @@ def main():
                         if options.clean:
                             if len(solution):
                                 solution = solution[1:-1]
-                        string_tab += "%s%s" % (solution,delimiter)
-                    string_tab += "%s\n" % result[1]
+                        fo.write("%s%s" % (solution, delimiter))
+                    fo.write("%s\n" % result[1])
 
-                if options.output_file_name:
-                    try:
-                        fo = open(options.output_file_name,'w')
-                    except IOError:
-                        raise
-                    fo.write(string_tab[:-1])
-                    fo.close()
-                else:
-                    print(string_tab[:-1])
+        if options.output_file_name:
+            pass
+        else:
+            print(fo.getvalue())
+
+        fo.close()
+
 
 if __name__ == "__main__":
     main()
