@@ -1220,14 +1220,14 @@ class ExtractGraphFromSimpleTripleStore(object):
         node_key_map = {}
         for node_key in self.node_predicate_mappings.keys():
             key_identifier = "nodeKey" + str(n_node_keys)
-            xml_string += graphml_obj.define_key(key_identifier, "node", node_key, "String")
+            xml_string += graphml_obj.define_key(key_identifier, "node", node_key, "string")
             node_key_map[node_key] = key_identifier
             n_node_keys += 1
 
         edge_key_map = {}
         xml_string += graphml_obj.weight_key()
         edge_key_map["weight"] = graphml_obj.weight_key_id
-        xml_string += graphml_obj.define_key("EdgeKey1","edge","Label","text")
+        xml_string += graphml_obj.define_key("EdgeKey1","edge","Label","string")
         edge_key_map["Label"] = "EdgeKey1"
 
         xml_string += graphml_obj.open_graph("g0","directed")

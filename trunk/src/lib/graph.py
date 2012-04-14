@@ -118,7 +118,10 @@ class GraphML(GraphXML):
 
     def open_xml(self):
         return """<?xml version="1.0" encoding="UTF-8"?>
-<graphml>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+     http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
 """
     def close_xml(self):
         return "</graphml>\n"
@@ -151,7 +154,7 @@ class GraphML(GraphXML):
         return 2 * "\t" + "</edge>\n"
 
     def weight_key(self):
-        return self.define_key("edgeKey0","edge","weight","String")
+        return self.define_key("edgeKey0","edge","weight","string")
 
 
 class GexfTriples(object):
