@@ -1170,6 +1170,8 @@ class ExtractGraphFromSimpleTripleStore(object):
         self.referenced_uris = {}
         self.global_id = 1
         self.patterns_result_sets = []
+        self.uri_label = "uri"
+        self.publish_uri = 1
 
     def add_pattern_for_links(self, pattern, restrictions=[], variables = ('a','b'), link_name=None):
         self.patterns_for_links.append((pattern, restrictions, variables, link_name))
@@ -1180,6 +1182,9 @@ class ExtractGraphFromSimpleTripleStore(object):
 
     def register_label(self, uri="<http://www.w3.org/2000/01/rdf-schema#label>"):
         self.register_node_predicate(uri,"Label")
+
+    def publish_uri(self):
+        self.publish_uri = 1
 
     def register_class(self, uri="<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"):
         self.register_node_predicate(uri,"Class")
@@ -1224,6 +1229,10 @@ class ExtractGraphFromSimpleTripleStore(object):
             node_key_map[node_key] = key_identifier
             n_node_keys += 1
 
+        if self.publish_uri:
+            uri_node_key = "nodeKey" + str(n_node_keys)
+            xml_string += graphml_obj.define_key(uri_node_key, "node", self.uri_label, "string")
+
         edge_key_map = {}
         xml_string += graphml_obj.weight_key()
         edge_key_map["weight"] = graphml_obj.weight_key_id
@@ -1252,6 +1261,8 @@ class ExtractGraphFromSimpleTripleStore(object):
                         if len(predicate_map):
                             data_string = predicate_map[uri][1:-1]
                         xml_string += graphml_obj.data(key_identifier, data_string)
+            if self.publish_uri:
+                xml_string += graphml_obj.data(uri_node_key, uri[1:-1])
 
             xml_string += graphml_obj.close_node()
             fo.write(xml_string)
