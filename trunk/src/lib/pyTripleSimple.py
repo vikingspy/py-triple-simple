@@ -1263,7 +1263,7 @@ class ExtractGraphFromSimpleTripleStore(object):
                             data_string = predicate_map[uri][1:-1]
                         xml_string += graphml_obj.data(key_identifier, xml_escape(data_string))
             if self.publish_uri:
-                xml_string += graphml_obj.data(uri_node_key, node[1:-1])
+                xml_string += graphml_obj.data(uri_node_key, xml_escape(node[1:-1]))
 
             xml_string += graphml_obj.close_node()
             fo.write(xml_string)
