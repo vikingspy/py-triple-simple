@@ -2,6 +2,7 @@
 # and open the template in the editor.
 
 import unittest
+from xml.etree.ElementTree import XMLParser
 import pyTripleSimple
 
 class  TestPyTripleSimpleTestCase(unittest.TestCase):
@@ -151,8 +152,24 @@ class TestExtractGraphFromSimpleTripleStore(unittest.TestCase):
         egfrsts_obj.register_class()
         egfrsts_obj.add_pattern_for_links([['a','b','c']],[('b','in',['<http://acme.com/rdf#isLabeller>'])],("a","c"), "labeller")
         result_xml = egfrsts_obj.translate_into_graphml_file()
-        print(result_xml)
 
+        from xml.etree.ElementTree import XML
+        elements = XML(result_xml)
+        xml_tags = []
+        for element in elements:
+            xml_tags.append(element.tag)
+        self.assertTrue("{http://graphml.graphdrawing.org/xmlns}key" in xml_tags)
+        self.assertTrue("{http://graphml.graphdrawing.org/xmlns}graph" in xml_tags)
+
+        try:
+            import networkx
+            fo = open("acme.graphml","w")
+            fo.write(result_xml)
+            fo.close()
+            networkx.read_graphml("acme.graphml")
+            f.close()
+        except ImportError:
+            pass
 
 
 
