@@ -154,7 +154,7 @@ class GraphML(GraphXML):
         return 2 * "\t" + "</edge>\n"
 
     def weight_key(self):
-        return self.define_key("edgeKey0","edge","weight","string")
+        return self.define_key("edgeKey0","edge","weight","float")
 
 
 class GexfTriples(object):
