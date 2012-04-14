@@ -4,6 +4,7 @@ Classes for processing and working with files that follow the ntriples format.
 """
 
 import re
+from xml.sax.saxutils import escape as xml_escape
 
 common_prefixes = {"rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"}
 
@@ -1260,7 +1261,7 @@ class ExtractGraphFromSimpleTripleStore(object):
                         key_identifier = node_key_map[self.node_reverse_predicate_mappings[uri]]
                         if len(predicate_map):
                             data_string = predicate_map[uri][1:-1]
-                        xml_string += graphml_obj.data(key_identifier, data_string)
+                        xml_string += graphml_obj.data(key_identifier, xml_escape(data_string))
             if self.publish_uri:
                 xml_string += graphml_obj.data(uri_node_key, uri[1:-1])
 
