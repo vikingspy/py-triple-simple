@@ -14,7 +14,7 @@ import pyTripleSimple as pyt
 from gexf import GephiGexf
 }}}
 
-Then initialize triple store:
+Then initialize the triple store:
 {{{
 ts = pyt.SimpleTripleStore() #Create a triple store object
 }}}
