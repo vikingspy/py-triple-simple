@@ -51,4 +51,4 @@ is then used.
 
 By looping through the matched result sets a weight is set to the nodes which represent instances of a class and different predicates which are the edges in the graph.  The final output in Gephi after applying the [http://en.wikipedia.org/wiki/Force-based_algorithms_%28graph_drawing%29 Fruchterman-Reingold] algorithm and some manual aesthetics is:
 [http://dl.dropbox.com/u/21690634/reach-nolabels-small.png]
-The visualization of the Ntriples  from a VIVO sites provides a high level overview of the ontological structure and the relative importance of classes and different predicates.  
+This visualization of the N-triples from a VIVO sites provides a high level overview of the instantiated ontological structure by showing the relative importance of different classes and predicate usage.  
