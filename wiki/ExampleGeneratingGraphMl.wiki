@@ -3,7 +3,7 @@
 
 = Introduction =
 
-
+At the lowest level the semantic Web is built on the Resource Description Framework (RDF). RDF triples are built on a graph model.
 
 
 = Details =
