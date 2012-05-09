@@ -52,7 +52,6 @@ class testBasicWordExtraction(unittest.TestCase):
         result_set = list(ts_result.iterator_ntriples())
         self.assertTrue(len(result_set))
 
-
     def test_parse_triples(self):
         ft = FreeTextTriples.FreeTextExpander(3)
         string_to_parse1 = "albumin-EPO fusion protein expressed in CHO cell. "
