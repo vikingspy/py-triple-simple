@@ -46,14 +46,14 @@ graph_obj.add_pattern_for_links(base_patterns,base_restrictions,["a1","a2"],"coa
 fo = open(graphml_file_name,"w")
 graph_obj.translate_into_graphml_file(fo)
 }}}
-Now we can import the generated into software for analyzing graphs.  Mathematica 8 has added a [http://www.wolfram.com/mathematica/new-in-8/graph-and-network-analysis/ rich set of functions for analyzing graphs/networks]. The examples below uses some Mathematica library code that I am developing: http://code.google.com/p/network-exploration-analytical-tools/source/browse/trunk/mathematica/neat.m
+Now we can import the generated file into software for analyzing graphs.  Mathematica 8 has added a [http://www.wolfram.com/mathematica/new-in-8/graph-and-network-analysis/ rich set of functions for analyzing graphs/networks]. The examples below uses some Mathematica library code that I am developing: http://code.google.com/p/network-exploration-analytical-tools/source/browse/trunk/mathematica/neat.m
 
 [http://dl.dropbox.com/u/21690634/neat1.png]
 [http://dl.dropbox.com/u/21690634/neat2.png]
 [http://dl.dropbox.com/u/21690634/neat3.png]
 [http://dl.dropbox.com/u/21690634/neat4.png]
 
-If Mathematica ($$$), is not your cup of tea, the GraphML file can be analyzed in [http://networkx.lanl.gov/ NetworkX]
+If Mathematica ($$$), is not your cup of tea, the GraphML file can be analyzed in [http://networkx.lanl.gov/ NetworkX]:
 
 [http://24.media.tumblr.com/tumblr_m2t40gQFAP1r6jx3qo1_1280.png]
 
