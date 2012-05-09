@@ -49,3 +49,8 @@ fo = open(graphml_file_name,"w")
 graph_obj.translate_into_graphml_file(fo)
 }}}
 Now we can import the generated into software for analyzing graphs.  Mathematica 8 has added a [http://www.wolfram.com/mathematica/new-in-8/graph-and-network-analysis/ rich set of functions for analyzing graphs/networks].
+
+[http://dl.dropbox.com/u/21690634/neat1.png]
+[http://dl.dropbox.com/u/21690634/neat2.png]
+[http://dl.dropbox.com/u/21690634/neat3.png]
+[http://dl.dropbox.com/u/21690634/neat4.png]
