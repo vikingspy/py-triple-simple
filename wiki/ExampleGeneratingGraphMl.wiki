@@ -31,11 +31,11 @@ In SPARQL this type of construction can be done with a construct statement but w
 The following simple patterns can be used to connect two authors:
 {{{
 base_patterns = [("a1","p1","c1"),("a1","t","f"),("c1","p2","ar1"),("c2","p2","ar1"),("a2","p1","c2")]
-    base_restrictions = [("p1","in",["<http://vivoweb.org/ontology/core#authorInAuthorship>"]),
+base_restrictions = [("p1","in",["<http://vivoweb.org/ontology/core#authorInAuthorship>"]),
         ("p2", "in", ["<http://vivoweb.org/ontology/core#linkedInformationResource>"]),
         ("c1","!=","c2")]
 }}}
-The simple triple pattern object is based on Python lists so it is easy to programatically modify the pattern. This complete co-author network can get rather large. Additional restrictions can be added to restrict co-authorships between faculty members of the site:
+This complete co-author network can get rather large. Additional restrictions can be added to restrict co-authorships between faculty members of the site. This is done easily because the simple triple pattern object is based on Python lists so it is easy to programatically modify the pattern. 
 {{{
 membership_pattern = ("a2","t","f")
 membership_restriction = ("t","in", ["<http://vivoweb.org/ontology/core#hasMemberRole>"])
