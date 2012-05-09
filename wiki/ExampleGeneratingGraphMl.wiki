@@ -39,4 +39,6 @@ This complete co-author network can get rather large. Additional restrictions ca
 {{{
 membership_pattern = ("a2","t","f")
 membership_restriction = ("t","in", ["<http://vivoweb.org/ontology/core#hasMemberRole>"])
+base_patterns.append(membership_pattern)
+base_restrictions.append(membership_restriction)
 }}}
