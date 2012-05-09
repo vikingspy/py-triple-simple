@@ -48,3 +48,4 @@ graph_obj.add_pattern_for_links(base_patterns,base_restrictions,["a1","a2"],"coa
 fo = open(graphml_file_name,"w")
 graph_obj.translate_into_graphml_file(fo)
 }}}
+Now we can import the generated into software for analyzing graphs.  Mathematica 8 has added a rich set of functions for analyzing graphs.
