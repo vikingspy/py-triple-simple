@@ -28,4 +28,15 @@ In order to accurately model information for the application the VIVO ontology i
 [http://dl.dropbox.com/u/21690634/vivo-authorship-link.png]
 In SPARQL this type of construction can be done with a construct statement but we still have the difficulty when we want to analyze the graph.
 
- 
+The following simple patterns can be used to connect two authors:
+{{{
+base_patterns = [("a1","p1","c1"),("a1","t","f"),("c1","p2","ar1"),("c2","p2","ar1"),("a2","p1","c2")]
+    base_restrictions = [("p1","in",["<http://vivoweb.org/ontology/core#authorInAuthorship>"]),
+        ("p2", "in", ["<http://vivoweb.org/ontology/core#linkedInformationResource>"]),
+        ("c1","!=","c2")]
+}}}
+The simple triple pattern object is based on Python lists so it is easy to programatically modify the pattern. This complete co-author network can get rather large. Additional restrictions can be added to restrict co-authorships between faculty members of the site:
+{{{
+membership_pattern = ("a2","t","f")
+        membership_restriction = ("t","in", ["<http://vivoweb.org/ontology/core#hasMemberRole>"])
+}}}
