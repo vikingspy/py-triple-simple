@@ -3,7 +3,7 @@
 
 = Introduction =
 
-At the lowest level the semantic Web is built on the Resource Description Framework (RDF). RDF is a graph model. It would be expected that a wide range of network analytical tools could be directly applied to a RDF data set. However, most network algorithms assume that a graph does not have parallel edges which the RDF model allows. The challenge is to pull out simpler graphs from the RDF "[http://eagereyes.org/techniques/graphs-hairball hairball]" for analysis. Py-triple-simple can generate GraphML file from a N-triples file. GraphML, an XML based format, is a standard for graph interchange. In this example we will generate a publication co-authorship network from an RDF dump of a VIVO site.
+At the lowest level the semantic Web is built on the Resource Description Framework (RDF). RDF is a graph model. It would be expected that a wide range of network analytical tools could be directly applied to a RDF data set. However, most network algorithms assume that a graph does not have parallel edges which the RDF model allows. The challenge is to pull out simpler graphs from the RDF "[http://eagereyes.org/techniques/graphs-hairball hairball]" for analysis. Py-triple-simple can generate GraphML file from a N-triples file. GraphML, an XML based format, is a standard for graph interchange. In this example we will generate a publication co-authorship network from an RDF dump of a [http://vivoweb.org/ VIVO site].
 
 = Details =
 
@@ -35,7 +35,7 @@ base_restrictions = [("p1","in",["<http://vivoweb.org/ontology/core#authorInAuth
         ("p2", "in", ["<http://vivoweb.org/ontology/core#linkedInformationResource>"]),
         ("c1","!=","c2")]
 }}}
-The complete co-author network can get rather large. Additional restrictions can be added to restrict the size of the network by excluding authors who are not part of the Vivo site. This is done easily in py-triple-simple because the simple triple patterns are based on Python lists so it is easy to programatically modify the pattern. 
+The complete co-author network can get rather large. Additional restrictions can be added to restrict the size of the network by excluding authors who are not part of the VIVO site. This is done easily in py-triple-simple because the simple triple patterns are based on Python lists so it is easy to programatically modify the pattern. 
 {{{
 membership_pattern = ("a2","t","f")
 membership_restriction = ("t","in", ["<http://vivoweb.org/ontology/core#hasMemberRole>"])
