@@ -25,7 +25,7 @@ graph_obj.register_label()
 }}}
 
 In order to accurately model information for the application the VIVO ontology is more complex than initially one expects. It is not always the case that a single link needs to be traversed but a longer path will need to be followed. To generate a co-authorship network where we link faculty who have shared publications we need to traverse several triples and condense this into a single link.
-
-In SPARQL this type of construction can be done with a construct statement but we still have the difficulty that we need to analyze the data set.
+[http://dl.dropbox.com/u/21690634/vivo-authorship-link.png]
+In SPARQL this type of construction can be done with a construct statement but we still have the difficulty when we want to analyze the graph.
 
  
