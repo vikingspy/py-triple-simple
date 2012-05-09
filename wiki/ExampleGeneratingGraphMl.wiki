@@ -38,5 +38,5 @@ base_patterns = [("a1","p1","c1"),("a1","t","f"),("c1","p2","ar1"),("c2","p2","a
 The simple triple pattern object is based on Python lists so it is easy to programatically modify the pattern. This complete co-author network can get rather large. Additional restrictions can be added to restrict co-authorships between faculty members of the site:
 {{{
 membership_pattern = ("a2","t","f")
-        membership_restriction = ("t","in", ["<http://vivoweb.org/ontology/core#hasMemberRole>"])
+membership_restriction = ("t","in", ["<http://vivoweb.org/ontology/core#hasMemberRole>"])
 }}}
