@@ -3,11 +3,11 @@
 
 = Introduction =
 
-At the lowest level the semantic Web is built on the Resource Description Framework (RDF). RDF is a graph model. It would be expected that a wide range of network analytical tools could be directly applied to a RDF data set. However, most network algorithms assume that a graph does not have parallel edges which the RDF model allows. The challenge is to pull out simpler graphs from the RDF "[hairball  http://link.informatics.stonybrook.edu/rxnorm/RXAUI/2982568]" for analysis. Py-triple-simple can generate GraphML file from a N-triples file. GraphML, an XML based format, is a standard for graph interchange. In this example we will generate a publication co-authorship network from an RDF dump of a VIVO site.
+At the lowest level the semantic Web is built on the Resource Description Framework (RDF). RDF is a graph model. It would be expected that a wide range of network analytical tools could be directly applied to a RDF data set. However, most network algorithms assume that a graph does not have parallel edges which the RDF model allows. The challenge is to pull out simpler graphs from the RDF "[http://link.informatics.stonybrook.edu/rxnorm/RXAUI/2982568] hairball" for analysis. Py-triple-simple can generate GraphML file from a N-triples file. GraphML, an XML based format, is a standard for graph interchange. In this example we will generate a publication co-authorship network from an RDF dump of a VIVO site.
 
 = Details =
 
-To understand how to go from an RDF N-triples to a GraphML file the code in the script [generate_coauthor_graph.py http://code.google.com/p/sbu-mi-vivo-tools/source/browse/trunk/generate_coauthor_graph.py] will be explained.
+To understand how to go from an RDF N-triples to a GraphML file the code in the script [http://code.google.com/p/sbu-mi-vivo-tools/source/browse/trunk/generate_coauthor_graph.py generate_coauthor_graph.py ] will be explained.
 
 The first step will be to open and load the N-triples file into memory.
 {{{
