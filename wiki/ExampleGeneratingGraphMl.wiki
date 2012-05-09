@@ -24,7 +24,7 @@ graph_obj = ExtractGraphFromSimpleTripleStore(ts)
 graph_obj.register_label()
 }}}
 
-In order to accurately model information the VIVO ontology is more nuanced than initially one expects. It is not always the case that a single link needs to be traversed but a longer path will need to be followed. To generate a network of faculty who share authorship on  publications we need to traverse several triples and condense the multiple steps into a single leap.
+In order to accurately model information the VIVO ontology is more nuanced than one initially expects. It is not always the case that a single link needs to be traversed but a longer path will need to be followed. To generate a network of faculty who share authorship on  publications we need to traverse several triples and condense the multiple steps into a single leap.
 [http://dl.dropbox.com/u/21690634/vivo-authorship-link.png]
 In SPARQL this type of construction can be done with a construct statement but we still have the difficulty when we want to analyze the graph using standard tools for network/graph analysis.
 
