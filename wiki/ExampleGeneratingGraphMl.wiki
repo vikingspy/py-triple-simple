@@ -35,7 +35,7 @@ base_restrictions = [("p1","in",["<http://vivoweb.org/ontology/core#authorInAuth
         ("p2", "in", ["<http://vivoweb.org/ontology/core#linkedInformationResource>"]),
         ("c1","!=","c2")]
 }}}
-The complete co-author network can get rather large for a well populated VIVO installation like [http://reach.suny.edu/ SUNY REACH]. Additional restrictions can be added to reduce the size of the network by excluding authors who are not part of the VIVO site. This is done easily in py-triple-simple because the simple triple patterns are based on Python lists so it is easy to programatically modify the pattern. 
+The complete co-author network can get rather large for a well populated VIVO installation, such as, [http://reach.suny.edu/ SUNY REACH]. Additional restrictions can be added to reduce the size of the network by excluding authors who are not part of the VIVO site. This is done easily in py-triple-simple because the simple triple patterns are based on Python lists so it is easy to programatically modify the pattern. 
 {{{
 membership_pattern = ("a2","t","f")
 membership_restriction = ("t","in", ["<http://vivoweb.org/ontology/core#hasMemberRole>"])
