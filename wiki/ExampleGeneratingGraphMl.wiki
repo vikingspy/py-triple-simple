@@ -54,3 +54,7 @@ Now we can import the generated into software for analyzing graphs.  Mathematica
 [http://dl.dropbox.com/u/21690634/neat2.png]
 [http://dl.dropbox.com/u/21690634/neat3.png]
 [http://dl.dropbox.com/u/21690634/neat4.png]
+
+If Mathematica ($$$), is not your cup of tea, the GraphML file can be analyzed in [http://networkx.lanl.gov/ NetworkX]
+
+[http://24.media.tumblr.com/tumblr_m2t40gQFAP1r6jx3qo1_1280.png]
