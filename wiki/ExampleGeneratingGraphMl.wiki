@@ -48,7 +48,7 @@ graph_obj.add_pattern_for_links(base_patterns,base_restrictions,["a1","a2"],"coa
 fo = open(graphml_file_name,"w")
 graph_obj.translate_into_graphml_file(fo)
 }}}
-Now we can import the generated into software for analyzing graphs.  Mathematica 8 has added a [http://www.wolfram.com/mathematica/new-in-8/graph-and-network-analysis/ rich set of functions for analyzing graphs/networks].
+Now we can import the generated into software for analyzing graphs.  Mathematica 8 has added a [http://www.wolfram.com/mathematica/new-in-8/graph-and-network-analysis/ rich set of functions for analyzing graphs/networks]. The examples below use some Mathematica library code that I am developing: http://code.google.com/p/network-exploration-analytical-tools/source/browse/trunk/mathematica/neat.m
 
 [http://dl.dropbox.com/u/21690634/neat1.png]
 [http://dl.dropbox.com/u/21690634/neat2.png]
