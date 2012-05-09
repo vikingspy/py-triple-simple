@@ -7,9 +7,7 @@ At the lowest level the semantic Web is built on the [http://en.wikipedia.org/wi
 
 = Details =
 
-To understand how to go from an RDF N-triples file to a GraphML file the code in the script [http://code.google.com/p/sbu-mi-vivo-tools/source/browse/trunk/generate_coauthor_graph.py generate_coauthor_graph.py ] will be explained.
-
-The first step will be to open and load the N-triples file into memory.
+To understand how to go from an RDF N-triples file to a GraphML file the code in the script [http://code.google.com/p/sbu-mi-vivo-tools/source/browse/trunk/generate_coauthor_graph.py generate_coauthor_graph.py ] will be explained.  The first step will be to open and load the N-triples file into memory.
 {{{
 from pyTripleSimple import SimpleTripleStore
 ts = SimpleTripleStore()
