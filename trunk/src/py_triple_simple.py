@@ -114,32 +114,32 @@ def main():
 
         if options.command == "statistics":
 
-            fo.write('Loading "%s"' % os.path.abspath(file_name))
+            fo.write('Loading "%s"\n' % os.path.abspath(file_name))
             start_time = time.clock()
             ts.load_ntriples(f)
             end_time = time.clock()
-            fo.write("Finished loading ntriples file")
+            fo.write("Finished loading ntriples file\n")
 
             number_of_triples = ts.n_triples()
 
-            fo.write("Number of triples %s loaded in %s seconds (%s triples/second)" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
-            fo.write("Number of distinct lexical symbols: %s" % ts.n_symbols())
+            fo.write("Number of triples %s loaded in %s seconds (%s triples/second)\n" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
+            fo.write("Number of distinct lexical symbols: %s\n" % ts.n_symbols())
 
-            fo.write("Number of distinct subjects: %s" % ts.n_subjects())
-            fo.write("Number of distinct predicates: %s" % ts.n_predicates())
+            fo.write("Number of distinct subjects: %s\n" % ts.n_subjects())
+            fo.write("Number of distinct predicates: %s\n" % ts.n_predicates())
             n_objects = ts.n_objects()
-            fo.write("Number of distinct objects including literals: %s" % n_objects)
+            fo.write("Number of distinct objects including literals: %s\n" % n_objects)
             n_literals = ts.n_literals()
-            fo.write("Number of literals: %s" % n_literals)
-            fo.write("Fraction of objects that are literals: %s" % ((n_literals * 1.0) / n_objects ))
+            fo.write("Number of literals: %s\n" % n_literals)
+            fo.write("Fraction of objects that are literals: %s\n" % ((n_literals * 1.0) / n_objects ))
             fo.write("")
-            fo.write("Top subjects are:")
+            fo.write("Top subjects are:\n")
             pprint.pprint(ts.top_subjects(display_n),fo)
             fo.write("")
-            fo.write("Top objects are:")
+            fo.write("Top objects are:\n")
             pprint.pprint(ts.top_objects(display_n),fo)
             fo.write("")
-            fo.write("Top predicates are:")
+            fo.write("Top predicates are:\n")
             pprint.pprint(ts.top_predicates(None),fo)
 
         elif options.command == "query":
