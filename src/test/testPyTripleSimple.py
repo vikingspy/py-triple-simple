@@ -99,6 +99,9 @@ class  TestPyTripleSimpleTestCase(unittest.TestCase):
         r9 = ts.simple_pattern_match([('a','p','b')], [('b','not in',['Hollywood'])],['a','p','b'])
         self.assertEquals(57 - 2,len(r9))
 
+        r10 = ts.simple_pattern_match([('s','p','o')],[],[pyTripleSimple.is_literal('o')])
+        self.assertEquals(2,len(r10))
+
 
 class  TestTriplePatterns(unittest.TestCase):
     def setup(self):

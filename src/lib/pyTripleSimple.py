@@ -985,10 +985,31 @@ class SimpleTripleStore(object):
         solutions_list = []
         for solution_key in solution_dict.keys():
             solutions = []
+
             for solution_encoded in solution_key:
                 solution_decoded = self._decode_address_formatted(solution_encoded)
                 solutions.append(solution_decoded)
+
+            if len(functions_to_apply.keys()): # if we are doing some function application
+                for modified_variable in functions_to_apply.keys():
+                    modified_variable_position = solution_variables.index(modified_variable)
+                    solutions[modified_variable_position] = functions_to_apply[modified_variable].evaluate(solutions[modified_variable_position])
             solutions_list.append([tuple(solutions),solution_dict[solution_key]])
+
+
+        if len(functions_to_apply.keys()): # The solution_list needs to reprocessed because the applied function might have changed the result
+            new_solutions = {}
+            for solution in solutions_list:
+                if solution[0] in new_solutions:
+                    new_solutions[solution[0]] += solution[1]
+                else:
+                    new_solutions[solution[0]] = solution[1]
+
+            new_solution_list = []
+            for new_solution in new_solutions.keys():
+                new_solution_list.append([new_solution,new_solutions[new_solution]])
+            solutions_list = new_solution_list
+
         solutions_list.sort(key=lambda x: x[1],reverse=True)
         
         return solutions_list
@@ -1155,7 +1176,7 @@ class TripleRestrictions(object):
 
 
 class ResultFormatter(object):
-    def __init__(variable):
+    def __init__(self,variable):
         self.variable = variable
     def evaluate(self,value):
         return value
