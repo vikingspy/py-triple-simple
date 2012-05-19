@@ -766,6 +766,19 @@ class SimpleTripleStore(object):
         descending occurrence [[['<http://example.org/property/1>','<http://example.org/property/2>'], 50)]]
         """
 
+        functions_to_apply = {}
+
+        processed_solution_variables = [] # Process solution variables in case a solution variable is a result modifier
+        for solution_variable in solution_variables:
+            if hasattr(solution_variable, "variable"):
+                variable = solution_variable.variable
+                functions_to_apply[variable] = solution_variable
+                processed_solution_variables.append(variable)
+            else:
+                processed_solution_variables.append(solution_variable)
+
+        solution_variables = processed_solution_variables
+
         patterns_obj = TriplePatterns(patterns)
         restrictions_obj = TripleRestrictions(restrictions, patterns_obj.variables())
 
@@ -1139,6 +1152,20 @@ class TripleRestrictions(object):
 
     def literal_exclusions(self):
         return self.literals_exclusions
+
+
+class ResultFormatter(object):
+    def __init__(variable):
+        self.variable = variable
+    def evaluate(self,value):
+        return value
+
+class is_literal(ResultFormatter):
+    def evaluate(self, value):
+        if value[0] == '"' and value[-1] == '"':
+            return '"1"'
+        else:
+            return '"0"'
 
 class IteratorTripleStore(object):
     def __init__(self,triple_engine):
