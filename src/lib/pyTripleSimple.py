@@ -1014,6 +1014,23 @@ class SimpleTripleStore(object):
         
         return solutions_list
 
+    def union_pattern_match_result_set(self, result_set1, result_set2):
+        """Union two result sets"""
+        new_result_dict = {}
+        for result_set in [result_set1, result_set2]:
+            for result in result_set:
+                result_tuple = result[0]
+                if result_tuple in new_result_dict:
+                    new_result_dict[result_tuple] += result[1]
+                else:
+                    new_result_dict[result_tuple] = result[1]
+        new_result_list = []
+        for new_result in new_result_dict.keys():
+            new_result_list.append([new_result,new_result_dict[new_result]])
+
+        new_result_list.sort(key=lambda x: x[1],reverse=True)
+        return new_result_list
+
 class TriplePatterns(object):
     def __init__(self,patterns):
         self.original_patterns = patterns
