@@ -126,7 +126,6 @@ def main():
             fo.write("Number of triples %s loaded in %s seconds (%s triples/second)\n" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
 
             object_breakdown = ts.simple_pattern_match([("s","p","o")],[],[pyTripleSimple.is_literal("o")])
-            pprint.pprint(object_breakdown)
 
             number_of_literals = 0
             for result in object_breakdown:
