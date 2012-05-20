@@ -123,6 +123,8 @@ def main():
             number_of_triples = ts.n_triples()
             Nt = number_of_triples
 
+            fo.write("Number of triples %s loaded in %s seconds (%s triples/second)\n" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
+
             object_breakdown = ts.simple_pattern_match([("s","p","o")],[],[pyTripleSimple.is_literal("o")])
             pprint.pprint(object_breakdown)
 
@@ -171,8 +173,6 @@ def main():
 
 
             class_coverage = [(class_result[1] * 1.0)/Ni for class_result in classes_results]
-
-            fo.write("Number of triples %s loaded in %s seconds (%s triples/second)\n" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
 
             fo.write("\n")
             fo.write("Number of triples (Nt): %s\n" % number_of_triples)
