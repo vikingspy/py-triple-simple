@@ -121,17 +121,86 @@ def main():
             fo.write("Finished loading ntriples file\n")
 
             number_of_triples = ts.n_triples()
+            Nt = number_of_triples
+
+            object_breakdown = ts.simple_pattern_match([("s","p","o")],[],[pyTripleSimple.is_literal("o")])
+            pprint.pprint(object_breakdown)
+
+            number_of_literals = 0
+            for result in object_breakdown:
+                if result[0][0] == '"1"':
+                    number_of_literals = result[1]
+            Nl = number_of_literals
+
+            number_of_objects = number_of_triples - number_of_literals
+            No = number_of_objects
+
+            rdf_type_breakdown = ts.simple_pattern_match([("a","r","c")], [("r","in",["<" + pyTripleSimple.common_prefixes["rdf"] + "type>"])],["r"])
+
+            number_of_instances = rdf_type_breakdown[0][1]
+            Ni = number_of_instances
+
+            number_of_symbols = ts.n_symbols()
+            Ns = number_of_symbols
+
+            number_of_distinct_literals = ts.n_literals()
+            Ndl = number_of_distinct_literals
+
+            classes_results = ts.simple_pattern_match( [("a","r","c")], [("r","in",["<" + pyTripleSimple.common_prefixes["rdf"] + "type>"])],["c"])
+            number_of_distinct_classes = len(classes_results)
+            Ndc = number_of_distinct_classes
+
+            number_of_distinct_objects = ts.n_objects() - number_of_distinct_literals
+            Ndo = number_of_distinct_objects
+
+            number_of_distinct_subjects = ts.n_subjects()
+            Nds = number_of_distinct_subjects
+
+            number_of_distinct_predicates = ts.n_predicates()
+            Ndp = number_of_distinct_predicates
+
+            subject_uris = ts.simple_pattern_match([("s","p","o")],[],["s"])
+            object_uris = ts.simple_pattern_match([("s","p","o")],[],["o"])
+
+            subject_objects_literals_uris = ts.union_pattern_match_result_set(subject_uris,object_uris)
+
+            subject_objects_uris = [uresult for uresult in subject_objects_literals_uris if uresult[0][0][0] != '"' and uresult[0][0][-1]]
+
+            number_of_distinct_uris = len(subject_objects_uris)
+            Nu = number_of_distinct_uris
+
+
+            class_coverage = [(class_result[1] * 1.0)/Ni for class_result in classes_results]
 
             fo.write("Number of triples %s loaded in %s seconds (%s triples/second)\n" % (number_of_triples, end_time - start_time,(number_of_triples * 1.0)/ (end_time - start_time)))
-            fo.write("Number of distinct lexical symbols: %s\n" % ts.n_symbols())
 
-            fo.write("Number of distinct subjects: %s\n" % ts.n_subjects())
-            fo.write("Number of distinct predicates: %s\n" % ts.n_predicates())
-            n_objects = ts.n_objects()
-            fo.write("Number of distinct objects including literals: %s\n" % n_objects)
-            n_literals = ts.n_literals()
-            fo.write("Number of literals: %s\n" % n_literals)
-            fo.write("Fraction of objects that are literals: %s\n" % ((n_literals * 1.0) / n_objects ))
+            fo.write("\n")
+            fo.write("Number of triples (Nt): %s\n" % number_of_triples)
+            fo.write("Number of literals (Nl): %s\n" % number_of_literals)
+            fo.write("Number of objects (No): %s\n" % number_of_objects)
+            fo.write("Number of typed instances (Ni): %s\n" % number_of_instances)
+
+            fo.write("Number of URIs excluding predicates (Nu): %s\n" % number_of_distinct_uris)
+            fo.write("Number of distinct classes (Nc): %s\n" % number_of_distinct_classes)
+
+            fo.write("Number of distinct subjects (Nds): %s\n" % number_of_distinct_subjects)
+            fo.write("Number of distinct predicates (Ndp): %s\n" % number_of_distinct_predicates)
+
+            fo.write("Number of distinct objects (Ndo): %s\n" % number_of_distinct_objects)
+
+            fo.write("Number of distinct literals (Ndl): %s\n" % number_of_distinct_literals)
+            fo.write("Number of distinct lexical symbols (Ndls): %s\n" % number_of_symbols)
+
+            fo.write("\n")
+            fo.write("Literalness (Nl/Nt): %s\n" % ((Nl * 1.0) / Nt))
+            fo.write("Literal uniqueness (Ndl/Nl): %s\n" % ((Ndl * 1.0) / Nl))
+            fo.write("Object uniqueness (Ndo/No): %s\n" % ((Ndo * 1.0) / No))
+            fo.write("Interconnectedness (1 - (Nl+Ni)/Nt): %s\n" % (1.0 - (Nl + Ni) / (Nt * 1.0)))
+            fo.write("Subject coverage (Nds/Nu): %s\n" % ((1.0 * Nds) / Nu))
+            fo.write("Object coverage (Ndo/Nu): %s\n" % ((1.0 * Ndo) / Nu))
+            fo.write("Class coverage: %s\n" % class_coverage)
+
+            #fo.write("Fraction of objects that are literals: %s\n" % ((number_of_distinct_literals * 1.0) / number_of_distinct_objects))
             fo.write("\n")
             fo.write("Top subjects are:\n")
             pprint.pprint(ts.top_subjects(display_n),fo)
@@ -143,7 +212,7 @@ def main():
             pprint.pprint(ts.top_predicates(None),fo)
             fo.write("\n")
             fo.write("Top classes are:\n")
-            classes_results = ts.simple_pattern_match( [("a","r","c")], [("r","in",["<" + pyTripleSimple.common_prefixes["rdf"] + "type>"])],["c"])
+
             pprint.pprint(classes_results,fo)
 
         elif options.command == "query":
