@@ -138,7 +138,11 @@ def main():
 
             rdf_type_breakdown = ts.simple_pattern_match([("a","r","c")], [("r","in",["<" + pyTripleSimple.common_prefixes["rdf"] + "type>"])],["r"])
 
-            number_of_instances = rdf_type_breakdown[0][1]
+            if len(rdf_type_breakdown):
+                number_of_instances = rdf_type_breakdown[0][1]
+            else:
+                number_of_instances = 0
+
             Ni = number_of_instances
 
             number_of_symbols = ts.n_symbols()
