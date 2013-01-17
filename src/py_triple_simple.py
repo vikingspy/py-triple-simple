@@ -1,9 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
-    By default loads a ntriples file into a in-memory triple store
-    and performs basic statistics on the resulting ntriple file
-"""
+    By default loads a N-Triples file into an in-memory triple store
+    and performs basic statistics on the resulting N-Triples file
 
+    @author: Janos
+"""
 
 import time
 import os
@@ -84,11 +85,9 @@ def main():
                       default = 0,
                       help = "Strips string and <> uri designations")
 
-
     (options, args) = parser.parse_args()
 
     ts = pyTripleSimple.SimpleTripleStore() #pyTripleSimple.ShelveTripleEngine(ntriples_file_name)
-
 
     if options.display_n == "All":
         display_n = None
