@@ -42,7 +42,7 @@ class SimpleNTriplesLineReactor(object):
     
 class SimpleNtripleExtractor(object):
     """
-        This is the simplest of ntriples extractor. It ignores language tags and 
+        This is the simplest of a N-Triples extractor. It ignores language tags and
         XML data typed tags and extracts information from triples
     """
     
@@ -226,7 +226,7 @@ class SimpleTriple(object):
         return ntriple_string
 
 class TripleEngine(object):
-    """Abstract class for native triplestore in Python"""
+    """Abstract class for native triple store in Python"""
     
     def __init__(self):
         self.symbols = {}
@@ -497,7 +497,6 @@ class SimpleTripleStore(object):
 
     def iterator_ntriples(self):
         return IteratorTripleStoreNtriple(self)
-
 
     def _raw_find_triples(self,subjects_address,predicates_address,objects_address):
         n_subjects = len(subjects_address)
@@ -846,13 +845,13 @@ class SimpleTripleStore(object):
                                 exclusions_to_apply[variable].append(literal_address)
 
             updated_solution_list = []
-            if (subjects is not None and variable1_position >= solution_length):
+            if subjects is not None and variable1_position >= solution_length:
                 original_subjects_length = len(subjects)
                 subjects = self._encode_subjects(subjects)
             else:
                 original_subjects_length = 0
                 subjects = []
-            if (objects is not None and variable3_position >= solution_length):
+            if objects is not None and variable3_position >= solution_length:
                 original_objects_length = len(objects)
                 objects = self._encode_objects(objects)
             else:
@@ -1225,7 +1224,7 @@ class IteratorTripleStoreNtriple(IteratorTripleStore):
 class ExtractGraphFromSimpleTripleStore(object):
     """
         Extract a subgraph from a SimpleTripleStore and translate
-        it into a Graphml compliant format for graph analysis.
+        it into a GraphML compliant format for graph analysis.
     """
 
     def __init__(self, triple_store_object):
