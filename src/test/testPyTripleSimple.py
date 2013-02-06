@@ -146,6 +146,7 @@ class TestExtractGraphFromSimpleTripleStore(unittest.TestCase):
     def setup(self):
         pass
     def test_generate_graphml(self):
+
         self.ts = pyTripleSimple.SimpleTripleStore()
         f = open("acme.nt")
         self.ts.load_ntriples(f)
@@ -154,11 +155,13 @@ class TestExtractGraphFromSimpleTripleStore(unittest.TestCase):
         egfrsts_obj.register_label()
         egfrsts_obj.register_class()
         egfrsts_obj.add_pattern_for_links([['a','b','c']],[('b','in',['<http://acme.com/rdf#isLabeller>'])],("a","c"), "labeller")
+        egfrsts_obj.register_node_predicate("<http://acme.com/rdf#ndc/date_issued>", "date", lambda x : x.upper())
         result_xml = egfrsts_obj.translate_into_graphml_file()
 
         from xml.etree.ElementTree import XML
         elements = XML(result_xml)
         xml_tags = []
+
         for element in elements:
             xml_tags.append(element.tag)
         self.assertTrue("{http://graphml.graphdrawing.org/xmlns}key" in xml_tags)

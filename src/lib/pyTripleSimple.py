@@ -1221,6 +1221,8 @@ class IteratorTripleStoreNtriple(IteratorTripleStore):
         return self.triple_engine.triple_address_to_simple_triple(triple_address).to_ntriple()
 
 
+
+
 class ExtractGraphFromSimpleTripleStore(object):
     """
         Extract a subgraph from a SimpleTripleStore and translate
@@ -1231,6 +1233,7 @@ class ExtractGraphFromSimpleTripleStore(object):
         self.ts = triple_store_object
         self.node_predicate_mappings = {}
         self.node_reverse_predicate_mappings = {}
+        self.node_predicate_mapping_functions = {}
         self.patterns_for_links = []
         self.referenced_uris = {}
         self.global_id = 1
@@ -1241,15 +1244,25 @@ class ExtractGraphFromSimpleTripleStore(object):
     def add_pattern_for_links(self, pattern, restrictions=[], variables = ('a','b'), link_name=None):
         self.patterns_for_links.append((pattern, restrictions, variables, link_name))
 
-    def register_node_predicate(self,uri,mapped_name):
+    def register_node_predicate(self, uri, mapped_name, func_to_apply = None):
+        """Register a predicate to label a node attribute with the mapped name"""
         self.node_predicate_mappings[mapped_name] = uri
         self.node_reverse_predicate_mappings[uri] = mapped_name
+
+        if func_to_apply:
+            self.node_predicate_mapping_functions[mapped_name] = func_to_apply
 
     def register_label(self, uri="<http://www.w3.org/2000/01/rdf-schema#label>"):
         self.register_node_predicate(uri,"Label")
 
     def publish_uri(self):
         self.publish_uri = 1
+
+    def register_path(self, path_name, pattern = [], restrictions = []):
+        """
+        path_name gives the property name; pattern gives the pattern to search
+        """
+        pass
 
     def register_class(self, uri="<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"):
         self.register_node_predicate(uri,"Class")
@@ -1322,10 +1335,14 @@ class ExtractGraphFromSimpleTripleStore(object):
 
                 for uri in self.node_reverse_predicate_mappings.keys():
                     if uri in predicate_map:
-                        key_identifier = node_key_map[self.node_reverse_predicate_mappings[uri]]
+                        mapped_name = self.node_reverse_predicate_mappings[uri]
+                        key_identifier = node_key_map[mapped_name]
                         if len(predicate_map):
                             data_string = predicate_map[uri][1:-1]
+                            if mapped_name in self.node_predicate_mapping_functions:
+                                data_string = self.node_predicate_mapping_functions[mapped_name](data_string)
                         xml_string += graphml_obj.data(key_identifier, xml_escape(data_string))
+
             if self.publish_uri:
                 xml_string += graphml_obj.data(uri_node_key, xml_escape(node[1:-1]))
 
