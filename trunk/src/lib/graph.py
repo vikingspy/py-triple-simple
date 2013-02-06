@@ -37,7 +37,7 @@ class GraphXML(object):
         pass
 
 class GephiGexf(GraphXML):
-    """A class for generating gephi xml graphs that are read by Gephi"""
+    """A class for generating Gephi xml graphs that are read by Gephi"""
     def __init__(self):
         pass
     
@@ -155,7 +155,6 @@ class GraphML(GraphXML):
 
     def weight_key(self):
         return self.define_key("edgeKey0","edge","weight","float")
-
 
 class GexfTriples(object):
     def export_to_gexml(self,gephi_xml_file_name):
