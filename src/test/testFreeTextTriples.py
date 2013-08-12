@@ -5,6 +5,17 @@ import FreeTextTriples
 import pprint
 import pyTripleSimple
 
+try:
+    import nltk
+except ImportError:
+    pass
+
+
+class testWordExtractionNLTK(unittest.TestCase):
+    def setUp(self):
+        self.abstract_text = '''The group C of Sry-related high-mobility group (HMG) box (Sox) transcription factors has three members in most vertebrates: Sox4, Sox11 and Sox12. Sox4 and Sox11 have key roles in cardiac, neuronal and other major developmental processes, but their molecular roles in many lineages and the roles of Sox12 remain largely unknown. We show here that the three genes are co-expressed at high levels in neuronal and mesenchymal tissues in the developing mouse, and at variable relative levels in many other tissues. The three proteins have conserved remarkable identity through evolution in the HMG box DNA-binding domain and in the C-terminal 33 residues, and we demonstrate that the latter residues constitute their transactivation domain (TAD). Sox11 activates transcription several times more efficiently than Sox4 and up to one order of magnitude more efficiently than Sox12, owing to a more stable alpha-helical structure of its TAD. This domain and acidic domains interfere with DNA binding, Sox11 being most affected and Sox4 least affected. The proteins are nevertheless capable of competing with one another in reporter gene transactivation. We conclude that the three SoxC proteins have conserved overlapping expression patterns and molecular properties, and might therefore act in concert to fulfill essential roles in vivo.'''
+
+
 class testBasicWordExtraction(unittest.TestCase):
     def setUp(self):
         self.free_text = """
