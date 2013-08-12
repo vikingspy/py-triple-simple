@@ -8,13 +8,14 @@ from xml.sax.saxutils import escape as xml_escape
 
 common_prefixes = {"rdf" : "http://www.w3.org/1999/02/22-rdf-syntax-ns#", "rdfs" : "http://www.w3.org/2000/01/rdf-schema#"}
 
+
 class SimpleNTriplesLineReactor(object):
     """
         A skeleton class for writing simple triple action reactor.  
         When a particular pattern/condition is met a call back function is triggered
     """
     
-    def __init__(self,iterable_stream,matching_function,call_back_function = None,result_obj = None):
+    def __init__(self, iterable_stream, matching_function, call_back_function = None, result_obj=None):
         self.matching_function = matching_function
         self.iterable_stream = iterable_stream        
         self.result_obj = result_obj
@@ -901,7 +902,7 @@ class SimpleTripleStore(object):
                 else:
                     solutions = []
                 
-                if len(solutions): # Check if we have any solution
+                if len(solutions):  # Check if we have any solution
                     for solution_address in solutions:
                         local_solution_length = solution_length
 

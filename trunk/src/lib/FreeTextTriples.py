@@ -88,7 +88,8 @@ class FreeTextExpanderTripleStore(FreeTextSimpleTripleStore):
                             i = i + 1
 
 
-def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align =  [rdfs_label], alignment_uri = "http://example.org/aligned",number_of_words = 5):
+
+def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align = [rdfs_label], alignment_uri = "http://example.org/aligned",number_of_words = 5):
 
     print("Generating file to align into memory")
     ff = open(ntriples_file_to_align)
@@ -97,11 +98,13 @@ def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align =
 
     ff.close()
 
-    print("Reading alignment file into memory")
+    print("Generating fragments to align")
 
     fte_obj = FreeTextExpanderTripleStore(triples_to_fragment, predicates_to_align)
     fte_obj.generate(number_of_words)
     alignment_files = fte_obj.write_out_to_ntriples()
+
+    print("Reading alignment file into memory")
 
     alignment_obj = pyTripleSimple.SimpleTripleStore()
     fa = open(alignment_file)
@@ -116,7 +119,7 @@ def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align =
         print("Loading fragments to align into memory '%s'" % alignment_file)
         fragments_obj.load_ntriples(faf)
         for fragment in fragments_obj.iterator_triples():
-            result = alignment_obj.simple_pattern_match([("s","p","o")], [("o", "in", [fragment.object])],["s"])
+            result = alignment_obj.simple_pattern_match([("s", "p", "o")], [("o", "in", [fragment.object])], ["s"])
 
             if result:
                 aligned_obj.load_ntriples(["<%s> <%s> %s ." % (fragment.subject, alignment_uri, result[0][0][0])])
@@ -127,6 +130,7 @@ def align_ntriples(ntriples_file_to_align, alignment_file, predicates_to_align =
     fo = open(ntriples_aligned_file,"w")
     aligned_obj.export_to_ntriples_file(fo)
     fo.close()
+
 
 def main(ntriples_file_name,free_text_predicates=None):
     f = open(ntriples_file_name,"r")
@@ -146,7 +150,7 @@ def main(ntriples_file_name,free_text_predicates=None):
         ft = FreeTextSimpleTripleStore(ts)
 
     ft.generate()
-    file_names = write_out_to_ntriples(ntriples_file_name + ".")
+    file_names = ft.write_out_to_ntriples(ntriples_file_name + ".")
 
     print("Generated free text triples '%s'" % ntriples_file_name)
     for file_name in file_names:
