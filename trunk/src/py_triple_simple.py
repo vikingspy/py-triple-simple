@@ -195,7 +195,10 @@ def main():
 
             fo.write("\n")
             fo.write("Literalness (Nl/Nt): %s\n" % ((Nl * 1.0) / Nt))
-            fo.write("Literal uniqueness (Ndl/Nl): %s\n" % ((Ndl * 1.0) / Nl))
+            if Nl > 0:
+                fo.write("Literal uniqueness (Ndl/Nl): %s\n" % ((Ndl * 1.0) / Nl))
+            else:
+                fo.write("Literal uniqueness (Ndl/Nl): undefined")
             fo.write("Object uniqueness (Ndo/No): %s\n" % ((Ndo * 1.0) / No))
             fo.write("Interconnectedness (1 - (Nl+Ni)/Nt): %s\n" % (1.0 - (Nl + Ni) / (Nt * 1.0)))
             fo.write("Subject coverage (Nds/Nu): %s\n" % ((1.0 * Nds) / Nu))
